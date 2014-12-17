@@ -1,5 +1,5 @@
 require 'thread'
-module RSync
+module CDXSync
   class FileWatcher
 
     def initialize(sync_directory)
@@ -39,12 +39,15 @@ module RSync
 
     def start_monitoring
       Thread.start do
-        FileWatcher.new(@sync_directory).watch() do |path, event|
+        puts 'Monitoring started....'
+        ::FileWatcher.new(@sync_directory).watch do |path, event|
+          puts 'File found'
           if event == :new and File.fnmatch(@watch_expression, path)
             puts "New file detected: #{path}."
             @jobs << path
           end
         end
+        puts 'Monitoring ended'
       end
     end
   end
