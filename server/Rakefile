@@ -1,0 +1,15 @@
+require_relative './lib/rsync_file_watcher.rb'
+
+namespace :demo do
+
+  desc "Inform when new files ar in the inbox"
+
+  task :file_monitor do
+    watcher = RSync::FileWatcher.new('/tmp/inbox')
+    watcher.ensure_sync_directory
+    watcher.watch do |file|
+      puts 'new file detected'
+    end
+  end
+
+end
