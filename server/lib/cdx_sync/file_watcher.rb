@@ -5,8 +5,8 @@ module CDXSync
   class FileWatcher
     def initialize(sync_directory, debug_paths = false)
       @jobs = Queue.new
-      @sync_directory = sync_directory
-      @watch_expression = "#{@sync_directory}/inbox/**"
+      @inbox_directory = "#{sync_directory}/inbox"
+      @watch_expression = "#{@inbox_directory}/**"
       @debug_paths = debug_paths
     end
 
@@ -20,9 +20,9 @@ module CDXSync
     end
 
     def ensure_sync_directory
-      puts "Initializing RSync in #{@sync_directory}"
-      unless Dir.exists? @sync_directory
-        FileUtils.mkdir_p @sync_directory
+      puts "Initializing RSync in #{@inbox_directory}"
+      unless Dir.exists? @inbox_directory
+        FileUtils.mkdir_p @inbox_directory
       end
     end
 
