@@ -3,11 +3,15 @@ require 'filewatcher'
 
 module CDXSync
   class FileWatcher
-    def initialize(sync_directory, debug_paths = false)
+    def initialize(options = {})
       @jobs = Queue.new
-      @inbox_directory = "#{sync_directory}/inbox"
+
+      @inbox_directory = "#{options[:sync_directory]}/inbox"
       @watch_expression = "#{@inbox_directory}/**"
-      @debug_paths = debug_paths
+
+      @debug_paths = options[:debug_paths] || false
+
+      @remove_processed_files = options[:remove_processed_files] || true
     end
 
     def watch
@@ -16,7 +20,7 @@ module CDXSync
       while true
         next_file = @jobs.pop
         yield next_file
-        FileUtils.rm_rf next_file
+        FileUtils.rm_rf next_file if @remove_processed_files
       end
     end
 
