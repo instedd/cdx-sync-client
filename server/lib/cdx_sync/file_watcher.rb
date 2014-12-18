@@ -16,6 +16,7 @@ module CDXSync
       while true
         next_file = @jobs.pop
         yield next_file
+        FileUtils.rm_rf next_file
       end
     end
 
