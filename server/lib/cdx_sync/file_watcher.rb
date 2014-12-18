@@ -1,17 +1,18 @@
 require 'thread'
+require 'filewatcher'
+
 module CDXSync
   class FileWatcher
-
-    def initialize(sync_directory)
+    def initialize(sync_directory, debug_paths = false)
       @jobs = Queue.new
       @sync_directory = sync_directory
-      @watch_expression = "#{@sync_directory}/*/inbox/*"
+      @watch_expression = "#{@sync_directory}/inbox/**"
+      @debug_paths = debug_paths
     end
 
     def watch
       enqueue_preexisting_files
       start_monitoring
-      puts "Monitoring files in #{@sync_directory}..."
       while true
         next_file = @jobs.pop
         yield next_file
@@ -39,15 +40,17 @@ module CDXSync
 
     def start_monitoring
       Thread.start do
-        puts 'Monitoring started....'
-        ::FileWatcher.new(@sync_directory).watch do |path, event|
-          puts 'File found'
-          if event == :new and File.fnmatch(@watch_expression, path)
-            puts "New file detected: #{path}."
-            @jobs << path
+        puts "Monitoring of #{@watch_expression} started"
+        begin
+          ::FileWatcher.new([@watch_expression], @debug_paths).watch do |path, event|
+            if event == :new
+              puts "New file detected: #{path}."
+              @jobs << path
+            end
           end
+        ensure
+          puts 'Monitoring ended'
         end
-        puts 'Monitoring ended'
       end
     end
   end
