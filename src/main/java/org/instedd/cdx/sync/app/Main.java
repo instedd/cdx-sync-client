@@ -1,6 +1,6 @@
 package org.instedd.cdx.sync.app;
 
-import static org.instedd.cdx.sync.util.Exceptions.interruptable;
+import static org.instedd.sync4j.util.Exceptions.interruptable;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -8,8 +8,9 @@ import java.io.InputStream;
 import java.util.Properties;
 import java.util.Scanner;
 
-import org.instedd.cdx.sync.Settings;
-import org.instedd.cdx.sync.watcher.RsyncWatchListener.SyncMode;
+import org.instedd.sync4j.Settings;
+import org.instedd.sync4j.app.RSyncApplication;
+import org.instedd.sync4j.watcher.RsyncWatchListener.SyncMode;
 
 public class Main {
   public static void main(String[] args) throws IOException, InterruptedException {
