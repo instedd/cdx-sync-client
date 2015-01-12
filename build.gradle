@@ -7,11 +7,13 @@ apply plugin: 'eclipse'
 apply plugin: 'application'
 
 repositories {
+    mavenLocal()
     jcenter()
 }
 
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.3.6'
+    compile 'org.instedd:sync4j:0.0.1-SNAPSHOT'
 
     testCompile 'junit:junit:4.11'
 }
