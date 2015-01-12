@@ -38,9 +38,9 @@ public class Main {
   }
 
   protected static void stopOnExit(final RSyncApplication app) {
-    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+    Runtime.getRuntime().addShutdownHook(new Thread({ ->
       try {
-        interruptable(app::stop);
+        interruptable(app.&stop);
       } finally {
         System.out.println("bye!");
       }
@@ -49,21 +49,18 @@ public class Main {
 
   protected static void loop(RSyncApplication app) {
     System.out.print("\n\n** Type bye to stop app, or stop it from the system tray **\n\n");
-    @SuppressWarnings("resource")
-    Scanner in = new Scanner(System.in);
-    while (in.hasNextLine() && app.isRunning()) {
-      if (in.nextLine().equals("bye"))
+    Scanner scanner = new Scanner(System.in);
+    while (scanner.hasNextLine() && app.isRunning()) {
+      if (scanner.nextLine().equals("bye"))
         break;
     }
     System.exit(0);
   }
 
-  protected static Properties properties(String propertiesFilename) throws IOException {
-    try (InputStream fileIs = new FileInputStream(propertiesFilename)) {
-      Properties properties = new Properties();
-      properties.load(fileIs);
-      return properties;
-    }
+  protected static properties(String propertiesFilename) {
+    def properties = new Properties()
+    new File(propertiesFilename).withInputStream { properties.load(input) }
+    properties;
   }
 
 }
