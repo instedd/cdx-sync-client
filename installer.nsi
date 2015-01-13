@@ -2,6 +2,7 @@ CRCCheck On
 
 !define MUI_PRODUCT "CDX Client"
 !define APP_NAME    "cdx"
+!define EXE_NAME    "${APP_NAME}-client.exe"
 
 ;--------------------------------
 ;Plugins dir
@@ -82,7 +83,7 @@ Section "Install" Install
   ;Add files
   SetOutPath "$INSTDIR\bin"
   File "bin\RCEDIT.exe"
-  File /oname=${APP_NAME}-client.exe "bin\WinRun4J.exe"
+  File /oname=${EXE_NAME} "bin\WinRun4J.exe"
   File "bin\${APP_NAME}-client.ini"
   SetOutPath "$INSTDIR\lib"
   File "lib\*.jar"
@@ -100,7 +101,7 @@ SectionEnd
 Section "Build Launcher"
   DetailPrint "Building launcher..."
   SetOutPath "$INSTDIR\bin"
-  ExecDos::exec 'RCEDIT.exe /N ${APP_NAME}-client.exe ${APP_NAME}-client.ini' "" "$TEMP/${APP_NAME}-installer.log"
+  ExecDos::exec 'RCEDIT.exe /N ${EXE_NAME} ${APP_NAME}-client.ini' "" "$TEMP/${APP_NAME}-installer.log"
   Delete "${APP_NAME}-client.ini"
   Delete "rcedit.exe"
 SectionEnd
@@ -109,12 +110,12 @@ Section "Create Shortcuts"
   SetOutPath "$INSTDIR"
 
   ;create desktop shortcut
-  CreateShortCut "$DESKTOP\${MUI_PRODUCT}.lnk" "$INSTDIR\bin\${APP_NAME}-client.exe" ""
+  CreateShortCut "$DESKTOP\${MUI_PRODUCT}.lnk" "$INSTDIR\bin\${EXE_NAME}" ""
 
   ;create start-menu items
   CreateDirectory "$SMPROGRAMS\${START_MENU_GROUP}"
   CreateShortCut "$SMPROGRAMS\${START_MENU_GROUP}\Uninstall.lnk" "$INSTDIR\Uninstall.exe" "" "$INSTDIR\Uninstall.exe" 0
-  CreateShortCut "$SMPROGRAMS\${START_MENU_GROUP}\${MUI_PRODUCT}.lnk" "$INSTDIR\bin\${APP_NAME}-client.exe" "" "$INSTDIR\bin\${APP_NAME}-client.exe" 0
+  CreateShortCut "$SMPROGRAMS\${START_MENU_GROUP}\${MUI_PRODUCT}.lnk" "$INSTDIR\bin\${EXE_NAME}" "" "$INSTDIR\bin\${EXE_NAME}" 0
 
 ;write uninstall information to the registry
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${MUI_PRODUCT}" "DisplayName" "${MUI_PRODUCT}"
