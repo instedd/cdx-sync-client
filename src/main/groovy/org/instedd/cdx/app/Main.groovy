@@ -9,7 +9,9 @@ import java.util.Properties
 import java.util.Scanner
 
 import org.instedd.sync4j.Settings
+import org.instedd.sync4j.app.ConsoleMonitor;
 import org.instedd.sync4j.app.RSyncApplication
+import org.instedd.sync4j.app.SystemTrayMonitor;
 import org.instedd.sync4j.watcher.RsyncWatchListener.SyncMode
 
 public class Main {
@@ -29,33 +31,10 @@ public class Main {
 
     def appMode = SyncMode.valueOf(properties.getProperty("app.mode").toUpperCase())
 
-    def app = new RSyncApplication(settings, appName, appIcon, appMode)
-    stopOnExit(app)
-    app.start()
+    def app = new RSyncApplication(settings, appMode)
+    app.start(new SystemTrayMonitor(appName, appIcon), new ConsoleMonitor())
 
     printf("\n\n** Now go and create or edit some files on %s **\n\n", settings.localOutboxDir)
-    loop(app)
-
-  }
-
-  protected static stopOnExit(RSyncApplication app) {
-    Runtime.getRuntime().addShutdownHook(new Thread({ ->
-      try {
-        interruptable(app.&stop)
-      } finally {
-        println("bye!")
-      }
-    }))
-  }
-
-  protected static loop(RSyncApplication app) {
-    print("\n\n** Type bye to stop app, or stop it from the system tray **\n\n")
-    def scanner = new Scanner(System.in)
-    while (scanner.hasNextLine() && app.isRunning()) {
-      if (scanner.nextLine() == "bye")
-        break
-    }
-    System.exit(0)
   }
 
   protected static properties(String propertiesFilename) {
