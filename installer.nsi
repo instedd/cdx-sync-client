@@ -161,3 +161,8 @@ Section "un.Remove CDX Client"
 
   RMDir /r "$INSTDIR"
 SectionEnd
+
+Section "Run client at start"
+  WriteRegStr HKEY_CURRENT_USER "Software\Microsoft\Windows\CurrentVersion\Run" "${APP_NAME}-client" "$INSTDIR\bin\${EXE_NAME}"
+  MessageBox MB_OK "${APP_NAME}-client will run on start"
+SectionEnd
