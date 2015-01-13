@@ -18,17 +18,18 @@ public class Main {
       System.out.println("Usage: cdxsync <properties filename>");
       System.exit(1);
     }
-    String propertiesFilename = args[0];
-    Properties properties = properties(propertiesFilename);
+    def propertiesFilename = args[0];
+    def properties = properties(propertiesFilename);
 
-    Settings settings = Settings.fromProperties(properties);
+    def settings = Settings.fromProperties(properties);
     System.out.printf("\n\n** Settings are %s **\n\n", settings);
 
-    String appName = properties.getProperty("app.name");
-    String appIcon = properties.getProperty("app.icon");
-    SyncMode appMode = SyncMode.valueOf(properties.getProperty("app.mode").toUpperCase());
+    def appName = properties.getProperty("app.name");
+    def appIcon = Main.class.getResource(properties.getProperty("app.icon"));
 
-    final RSyncApplication app = new RSyncApplication(settings, appName, appIcon, appMode);
+    def appMode = SyncMode.valueOf(properties.getProperty("app.mode").toUpperCase());
+
+    def app = new RSyncApplication(settings, appName, appIcon, appMode);
     stopOnExit(app);
     app.start();
 
