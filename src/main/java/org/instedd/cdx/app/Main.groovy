@@ -59,7 +59,7 @@ public class Main {
 
   protected static properties(String propertiesFilename) {
     def properties = new Properties()
-    new File(propertiesFilename).withInputStream { properties.load(input) }
+    new File(propertiesFilename).withInputStream { properties.load(it) }
     properties;
   }
 
