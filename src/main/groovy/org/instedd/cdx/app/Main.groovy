@@ -1,6 +1,6 @@
-package org.instedd.cdx.sync.app;
+package org.instedd.cdx.app;
 
-import static org.instedd.cdx.sync.util.Exceptions.interruptable;
+import static org.instedd.sync4j.util.Exceptions.interruptable;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -8,8 +8,9 @@ import java.io.InputStream;
 import java.util.Properties;
 import java.util.Scanner;
 
-import org.instedd.cdx.sync.Settings;
-import org.instedd.cdx.sync.watcher.RsyncWatchListener.SyncMode;
+import org.instedd.sync4j.Settings;
+import org.instedd.sync4j.app.RSyncApplication;
+import org.instedd.sync4j.watcher.RsyncWatchListener.SyncMode;
 
 public class Main {
   public static void main(String[] args) throws IOException, InterruptedException {
@@ -37,9 +38,9 @@ public class Main {
   }
 
   protected static void stopOnExit(final RSyncApplication app) {
-    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+    Runtime.getRuntime().addShutdownHook(new Thread({ ->
       try {
-        interruptable(app::stop);
+        interruptable(app.&stop);
       } finally {
         System.out.println("bye!");
       }
@@ -48,21 +49,18 @@ public class Main {
 
   protected static void loop(RSyncApplication app) {
     System.out.print("\n\n** Type bye to stop app, or stop it from the system tray **\n\n");
-    @SuppressWarnings("resource")
-    Scanner in = new Scanner(System.in);
-    while (in.hasNextLine() && app.isRunning()) {
-      if (in.nextLine().equals("bye"))
+    Scanner scanner = new Scanner(System.in);
+    while (scanner.hasNextLine() && app.isRunning()) {
+      if (scanner.nextLine().equals("bye"))
         break;
     }
     System.exit(0);
   }
 
-  protected static Properties properties(String propertiesFilename) throws IOException {
-    try (InputStream fileIs = new FileInputStream(propertiesFilename)) {
-      Properties properties = new Properties();
-      properties.load(fileIs);
-      return properties;
-    }
+  protected static properties(String propertiesFilename) {
+    def properties = new Properties()
+    new File(propertiesFilename).withInputStream { properties.load(it) }
+    properties;
   }
 
 }
