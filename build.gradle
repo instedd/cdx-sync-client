@@ -18,8 +18,8 @@ dependencies {
     testCompile 'junit:junit:4.11'
 }
 
-def appName = "cdx-client"
-mainClassName = "org.instedd.cdx.sync.app.Main"
+def appName = "cdx"
+mainClassName = "org.instedd.cdx.app.Main"
 def version = "development-${"git rev-parse --verify --short HEAD".execute().text.trim()}"
 println "Version ${version}"
 

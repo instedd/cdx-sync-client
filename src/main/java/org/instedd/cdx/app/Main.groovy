@@ -1,4 +1,4 @@
-package org.instedd.cdx.sync.app;
+package org.instedd.cdx.app;
 
 import static org.instedd.sync4j.util.Exceptions.interruptable;
 
