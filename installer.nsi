@@ -79,6 +79,7 @@ SpaceTexts none
 Section "Install" Install
   SetOutPath "$INSTDIR"
   File "license.txt"
+  File "cdxsync.properties" 
 
   ;Add files
   SetOutPath "$INSTDIR\bin"

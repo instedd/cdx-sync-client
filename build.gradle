@@ -98,7 +98,10 @@ task prepareNsis {
     }
 } << {
     def workDir = installApp.destinationDir
-
+    copy {
+      from file("dist/cdxsync.properties")
+      into workDir
+    }
     copy {
         from file("dist/license.txt")
         into workDir
