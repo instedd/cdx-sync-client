@@ -3,6 +3,7 @@ CRCCheck On
 !define MUI_PRODUCT "CDX Client"
 !define APP_NAME    "cdx"
 !define EXE_NAME    "${APP_NAME}-client.exe"
+!define PROPS_FILE  "cdxsync.properties"
 
 ;--------------------------------
 ;Plugins dir
@@ -79,7 +80,7 @@ SpaceTexts none
 Section "Install" Install
   SetOutPath "$INSTDIR"
   File "license.txt"
-  File "cdxsync.properties" 
+  File "${PROPS_FILE}" 
 
   ;Add files
   SetOutPath "$INSTDIR\bin"
@@ -164,6 +165,6 @@ Section "un.Remove CDX Client"
 SectionEnd
 
 Section "Run client at start"
-  WriteRegStr HKEY_CURRENT_USER "Software\Microsoft\Windows\CurrentVersion\Run" "${APP_NAME}-client" "$INSTDIR\bin\${EXE_NAME}"
+  WriteRegStr HKEY_CURRENT_USER "Software\Microsoft\Windows\CurrentVersion\Run" "${APP_NAME}-client" '"$INSTDIR\bin\${EXE_NAME}" ${PROPS_FILE}'
   MessageBox MB_OK "${APP_NAME}-client will run on start"
 SectionEnd
