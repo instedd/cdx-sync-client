@@ -8,6 +8,8 @@ import java.util.logging.Logger;
 
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.Validate;
+import org.instedd.sync4j.util.Processes;
+import org.instedd.sync4j.util.Processes.Exit;
 
 class Credentials {
 
@@ -48,16 +50,14 @@ class Credentials {
 
 		def privateKey = new File(dir, keyName)
 		if (!privateKey.exists()) {
-			def stdoutBuffer = new StringBuffer()
-			def stderrBuffer = new StringBuffer()
 			try {
 				logger.info("Generating a new pair of SSH keys [${privateKey.absolutePath}]")
 				String emptyPassphrase = SystemUtils.IS_OS_WINDOWS ? "\"\"" : "" // windows ignores the argument if it's the empty string instead of passing an empty argument
-				Process process = ["ssh-keygen", "-t", "rsa", "-N", emptyPassphrase, "-f", privateKey.path].execute()
-				process.consumeProcessOutput(stdoutBuffer, stderrBuffer)
-				process.waitForOrKill(5000)
+				ProcessBuilder command = new ProcessBuilder("ssh-keygen", "-t", "rsa", "-N", emptyPassphrase, "-f", privateKey.path)
+                Exit exit = Processes.run(command)
+                logger.info("Exit value: ${exit.value} Stdout: ${exit.stdout} Stderr: ${exit.stderr}")
 			} catch (Exception e) {
-				logger.severe("A problem occurred while generating ssh keys. Process stdout:\n${stdoutBuffer}\n Process stdin:\n${stderrBuffer}\n")
+				logger.severe("A problem occurred while generating ssh keys: ${e}")
 			}
 		}
 
