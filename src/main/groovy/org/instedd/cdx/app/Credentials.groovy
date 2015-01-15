@@ -37,7 +37,7 @@ class Credentials {
 
 
 	/** Initializes a new pair of SSH keys if necessary. */
-	static Credentials initialize(String keysDirectoryPath) {
+	static Credentials initialize(String keysDirectoryPath, keyName = 'id_rsa') {
 		def dir = new File(keysDirectoryPath)
 		if(!dir.exists()) {
 			logger.info("Creating ${dir.absolutePath} data directory...")
@@ -46,7 +46,7 @@ class Credentials {
 
 		assert dir.exists() && dir.isDirectory(), "${keysDirectoryPath} should be a directory"
 
-		def privateKey = new File(dir, "act_key")
+		def privateKey = new File(dir, keyName)
 		if (!privateKey.exists()) {
 			def stdoutBuffer = new StringBuffer()
 			def stderrBuffer = new StringBuffer()
@@ -61,7 +61,7 @@ class Credentials {
 			}
 		}
 
-		new Credentials(privateKey, new File(dir, "act_key.pub"));
+		new Credentials(privateKey, new File(dir, "${keyName}.pub"));
 	}
 
 

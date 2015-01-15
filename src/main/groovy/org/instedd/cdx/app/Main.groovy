@@ -31,6 +31,8 @@ public class Main {
 
     def appMode = SyncMode.valueOf(properties.getProperty("app.mode").toUpperCase())
 
+    Credentials.initialize(settings.remoteKey);
+
     def app = new RSyncApplication(settings, appMode)
     app.start(new SystemTrayMonitor(appName, appIcon), new ConsoleMonitor())
 
