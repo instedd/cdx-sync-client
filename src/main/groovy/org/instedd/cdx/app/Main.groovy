@@ -12,6 +12,7 @@ import org.instedd.sync4j.Settings
 import org.instedd.sync4j.app.ConsoleMonitor;
 import org.instedd.sync4j.app.RSyncApplication
 import org.instedd.sync4j.app.SystemTrayMonitor;
+import org.instedd.sync4j.credentials.Credentials;
 import org.instedd.sync4j.watcher.RsyncWatchListener.SyncMode
 
 public class Main {
