@@ -6,6 +6,8 @@ import java.util.logging.Logger;
 
 import java.util.logging.Logger;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.Validate;
 import org.instedd.sync4j.util.Processes;
@@ -39,16 +41,10 @@ class Credentials {
 
 
   /** Initializes a new pair of SSH keys if necessary. */
-  static Credentials initialize(String keysDirectoryPath, keyName = 'id_rsa') {
-    def dir = new File(keysDirectoryPath)
-    if(!dir.exists()) {
-      logger.info("Creating ${dir.absolutePath} data directory...")
-      dir.mkdirs()
-    }
+  static Credentials initialize(String remoteKey) {
+    def privateKey = new File(remoteKey)
+    FileUtils.forceMkdir(privateKey)
 
-    assert dir.exists() && dir.isDirectory(), "${keysDirectoryPath} should be a directory"
-
-    def privateKey = new File(dir, keyName)
     if (!privateKey.exists()) {
       try {
         logger.info("Generating a new pair of SSH keys [${privateKey.absolutePath}]")
@@ -61,6 +57,6 @@ class Credentials {
       }
     }
 
-    new Credentials(privateKey, new File(dir, "${keyName}.pub"));
+    new Credentials(privateKey, new File("${remoteKey}.pub"))
   }
 }
