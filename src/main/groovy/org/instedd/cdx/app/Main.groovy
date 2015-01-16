@@ -34,6 +34,19 @@ public class Main {
 
     Credentials.initialize(settings.remoteKey);
 
+    /*
+     * if (!db.authenticated) {
+     *      initialConfig = promptForInitialConfig()
+     *      SyncAuthServer s = new SyncAuthServer(initialConfig.authToken, initialConfig.authServerUrl)
+     *      SyncServerSettings settings = s.authenticate(credentials.remotePublicKey)
+     *      db.authenticated = true
+     *      db.remotePort = settings.port
+     *      db.deviceToken = settings.deviceToken
+     *      ....
+     *  }
+     *  Settings s = new Settings(db......)
+     */
+
     def app = new RSyncApplication(settings, appMode)
     app.start(new SystemTrayMonitor(appName, appIcon), new ConsoleMonitor())
 
