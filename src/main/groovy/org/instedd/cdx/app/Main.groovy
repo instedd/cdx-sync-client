@@ -24,28 +24,27 @@ public class Main {
     def propertiesFilename = args[0]
     def properties = properties(propertiesFilename)
 
-    def settings = Settings.fromProperties(properties)
-    printf("\n\n** Settings are %s **\n\n", settings)
+    def appName = properties['app.name']
+    def appIcon = Main.getResource(properties['app.icon'])
+    def appMode = SyncMode.valueOf(properties['app.mode'].toUpperCase())
+    def dbPath = properties['app.dbPath']
 
-    def appName = properties.getProperty("app.name")
-    def appIcon = Main.class.getResource(properties.getProperty("app.icon"))
+    def settings
+    if(new File(dbPath).exists()) {
+      def db = MapDBDataStore.fromMapDB(dbPath);
+      settings = db.settings
+    } else {
+      def userSettings = promptForUserSettings()
+      def authServer = new SyncAuthServer(userSettings.authToken, userSettings.authServerUrl)
 
-    def appMode = SyncMode.valueOf(properties.getProperty("app.mode").toUpperCase())
+      def serverSettings = authServer.authenticate(userSettings.remotePublicKey)
+      settings = merge(userSettings, serverSettings)
+
+      def db = MapDBDataStore.fromMapDB(dbPath)
+      db.settings = settings
+    }
 
     Credentials.initialize(settings.remoteKey);
-
-    /*
-     * if (!db.authenticated) {
-     *      initialConfig = promptForInitialConfig()
-     *      SyncAuthServer s = new SyncAuthServer(initialConfig.authToken, initialConfig.authServerUrl)
-     *      SyncServerSettings settings = s.authenticate(credentials.remotePublicKey)
-     *      db.authenticated = true
-     *      db.remotePort = settings.port
-     *      db.deviceToken = settings.deviceToken
-     *      ....
-     *  }
-     *  Settings s = new Settings(db......)
-     */
 
     def app = new RSyncApplication(settings, appMode)
     app.start(new SystemTrayMonitor(appName, appIcon), new ConsoleMonitor())
@@ -53,10 +52,23 @@ public class Main {
     printf("\n\n** Now go and create or edit some files on %s **\n\n", settings.localOutboxDir)
   }
 
+  protected static merge(userSettings, serverSettings) {
+    new Settings(
+      remoteHost: serverSettings.remoteHost,
+      remotePort: serverSettings.remotePort,
+      remoteUser: serverSettings.remoteUser,
+      remoteInboxDir: serverSettings.remoteInboxDir,
+      remoteOutboxDir: serverSettings.remoteOutboxDir,
+
+      remoteKey: userSettings.remoteKey,
+      knownHostsFilePath: userSettings.knownHostsFilePath,
+      localInboxDir: userSettings.localInboxDir,
+      localOutboxDir: userSettings.localOutboxDir)
+  }
+
   protected static properties(String propertiesFilename) {
     def properties = new Properties()
     new File(propertiesFilename).withInputStream { properties.load(it) }
     properties
   }
-
 }
