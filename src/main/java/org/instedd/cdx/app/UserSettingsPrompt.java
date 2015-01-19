@@ -26,6 +26,7 @@ public class UserSettingsPrompt extends JDialog {
   private JTextField remoteKeyTextField;
   private JTextField knownHostsPathTextField;
   private JTextField authServerUrlTextBox;
+  private JTextField authTokenTextBox;
 
   /**
    * Launch the application.
@@ -51,9 +52,9 @@ public class UserSettingsPrompt extends JDialog {
     getContentPane().add(contentPanel, BorderLayout.CENTER);
     GridBagLayout gbl_contentPanel = new GridBagLayout();
     gbl_contentPanel.columnWidths = new int[]{119, 286, 0};
-    gbl_contentPanel.rowHeights = new int[]{16, 0, 28, 28, 28, 33, 0};
+    gbl_contentPanel.rowHeights = new int[]{16, 0, 0, 28, 28, 28, 33, 0};
     gbl_contentPanel.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
-    gbl_contentPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+    gbl_contentPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
     contentPanel.setLayout(gbl_contentPanel);
 
                 JLabel lblNewLabel = new JLabel("Enter your settings");
@@ -64,12 +65,29 @@ public class UserSettingsPrompt extends JDialog {
                 gbc_lblNewLabel.gridy = 0;
                 contentPanel.add(lblNewLabel, gbc_lblNewLabel);
 
+            JLabel lblNewLabel_2 = new JLabel("Auth Token");
+            GridBagConstraints gbc_lblNewLabel_2 = new GridBagConstraints();
+            gbc_lblNewLabel_2.fill = GridBagConstraints.HORIZONTAL;
+            gbc_lblNewLabel_2.insets = new Insets(0, 0, 5, 5);
+            gbc_lblNewLabel_2.gridx = 0;
+            gbc_lblNewLabel_2.gridy = 1;
+            contentPanel.add(lblNewLabel_2, gbc_lblNewLabel_2);
+
+            authTokenTextBox = new JTextField();
+            GridBagConstraints gbc_authTokenTextBox = new GridBagConstraints();
+            gbc_authTokenTextBox.insets = new Insets(0, 0, 5, 0);
+            gbc_authTokenTextBox.fill = GridBagConstraints.HORIZONTAL;
+            gbc_authTokenTextBox.gridx = 1;
+            gbc_authTokenTextBox.gridy = 1;
+            contentPanel.add(authTokenTextBox, gbc_authTokenTextBox);
+            authTokenTextBox.setColumns(10);
+
             JLabel lblNewLabel_1 = new JLabel("Auth Server URL");
             GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
             gbc_lblNewLabel_1.anchor = GridBagConstraints.WEST;
             gbc_lblNewLabel_1.insets = new Insets(0, 0, 5, 5);
             gbc_lblNewLabel_1.gridx = 0;
-            gbc_lblNewLabel_1.gridy = 1;
+            gbc_lblNewLabel_1.gridy = 2;
             contentPanel.add(lblNewLabel_1, gbc_lblNewLabel_1);
 
             authServerUrlTextBox = new JTextField();
@@ -78,7 +96,7 @@ public class UserSettingsPrompt extends JDialog {
             gbc_authServerUrlTextBox.insets = new Insets(0, 0, 5, 0);
             gbc_authServerUrlTextBox.fill = GridBagConstraints.HORIZONTAL;
             gbc_authServerUrlTextBox.gridx = 1;
-            gbc_authServerUrlTextBox.gridy = 1;
+            gbc_authServerUrlTextBox.gridy = 2;
             contentPanel.add(authServerUrlTextBox, gbc_authServerUrlTextBox);
             authServerUrlTextBox.setColumns(10);
 
@@ -87,7 +105,7 @@ public class UserSettingsPrompt extends JDialog {
             gbc_remoteKeyLabel.anchor = GridBagConstraints.SOUTHWEST;
             gbc_remoteKeyLabel.insets = new Insets(0, 0, 5, 5);
             gbc_remoteKeyLabel.gridx = 0;
-            gbc_remoteKeyLabel.gridy = 2;
+            gbc_remoteKeyLabel.gridy = 3;
             contentPanel.add(remoteKeyLabel, gbc_remoteKeyLabel);
 
         remoteKeyTextField = new JTextField();
@@ -97,7 +115,7 @@ public class UserSettingsPrompt extends JDialog {
         gbc_remoteKeyTextField.fill = GridBagConstraints.HORIZONTAL;
         gbc_remoteKeyTextField.insets = new Insets(0, 0, 5, 0);
         gbc_remoteKeyTextField.gridx = 1;
-        gbc_remoteKeyTextField.gridy = 2;
+        gbc_remoteKeyTextField.gridy = 3;
         contentPanel.add(remoteKeyTextField, gbc_remoteKeyTextField);
 
                 JLabel lblKnownHostsPath = new JLabel("Known Hosts Path:");
@@ -105,7 +123,7 @@ public class UserSettingsPrompt extends JDialog {
                 gbc_lblKnownHostsPath.anchor = GridBagConstraints.SOUTHWEST;
                 gbc_lblKnownHostsPath.insets = new Insets(0, 0, 5, 5);
                 gbc_lblKnownHostsPath.gridx = 0;
-                gbc_lblKnownHostsPath.gridy = 3;
+                gbc_lblKnownHostsPath.gridy = 4;
                 contentPanel.add(lblKnownHostsPath, gbc_lblKnownHostsPath);
 
             knownHostsPathTextField = new JTextField();
@@ -114,7 +132,7 @@ public class UserSettingsPrompt extends JDialog {
             gbc_knownHostsPathTextField.fill = GridBagConstraints.BOTH;
             gbc_knownHostsPathTextField.insets = new Insets(0, 0, 5, 0);
             gbc_knownHostsPathTextField.gridx = 1;
-            gbc_knownHostsPathTextField.gridy = 3;
+            gbc_knownHostsPathTextField.gridy = 4;
             contentPanel.add(knownHostsPathTextField, gbc_knownHostsPathTextField);
 
             JLabel lblOutboxPath = new JLabel("Inbox Path:");
@@ -122,7 +140,7 @@ public class UserSettingsPrompt extends JDialog {
             gbc_lblOutboxPath.anchor = GridBagConstraints.WEST;
             gbc_lblOutboxPath.insets = new Insets(0, 0, 5, 5);
             gbc_lblOutboxPath.gridx = 0;
-            gbc_lblOutboxPath.gridy = 4;
+            gbc_lblOutboxPath.gridy = 5;
             contentPanel.add(lblOutboxPath, gbc_lblOutboxPath);
 
             inboxPathTextField = new JTextField();
@@ -131,7 +149,7 @@ public class UserSettingsPrompt extends JDialog {
             gbc_inboxPathTextField.fill = GridBagConstraints.BOTH;
             gbc_inboxPathTextField.insets = new Insets(0, 0, 5, 0);
             gbc_inboxPathTextField.gridx = 1;
-            gbc_inboxPathTextField.gridy = 4;
+            gbc_inboxPathTextField.gridy = 5;
             contentPanel.add(inboxPathTextField, gbc_inboxPathTextField);
 
             JLabel label = new JLabel("Outbox Path:");
@@ -139,7 +157,7 @@ public class UserSettingsPrompt extends JDialog {
             gbc_label.anchor = GridBagConstraints.WEST;
             gbc_label.insets = new Insets(0, 0, 0, 5);
             gbc_label.gridx = 0;
-            gbc_label.gridy = 5;
+            gbc_label.gridy = 6;
             contentPanel.add(label, gbc_label);
 
         outboxPathTextField = new JTextField();
@@ -147,7 +165,7 @@ public class UserSettingsPrompt extends JDialog {
         GridBagConstraints gbc_outboxPathTextField = new GridBagConstraints();
         gbc_outboxPathTextField.fill = GridBagConstraints.BOTH;
         gbc_outboxPathTextField.gridx = 1;
-        gbc_outboxPathTextField.gridy = 5;
+        gbc_outboxPathTextField.gridy = 6;
         contentPanel.add(outboxPathTextField, gbc_outboxPathTextField);
     {
       JPanel buttonPane = new JPanel();
@@ -178,6 +196,7 @@ public class UserSettingsPrompt extends JDialog {
   public Map<String, String> getSettings() {
     return new HashMap<String, String>(){
       {
+        put("authToken", authTokenTextBox.getText());
         put("authServerUrl", authServerUrlTextBox.getText());
         put("remoteKey", remoteKeyTextField.getText());
         put("knownHostsFilePath", knownHostsPathTextField.getText());
