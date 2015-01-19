@@ -1,7 +1,8 @@
 package org.instedd.cdx.app;
 
-import groovyx.net.http.HTTPBuilder
 import static groovyx.net.http.ContentType.*
+import groovy.json.JsonSlurper
+import groovyx.net.http.HTTPBuilder
 
 public class SyncAuthServer {
 
@@ -20,7 +21,13 @@ public class SyncAuthServer {
     http.post(
         path: '/api/activations',
         contentType: URLENC,
-        body: [public_key: publicKey, token: authToken]) {  rs -> response  = rs}
+        body: [public_key: publicKey, token: authToken]) {  rs, json ->
+          if ( json.status == 'success' ) {
+            response =  json.settings
+          } else {
+            throw new Exception(json.status)
+          }
+        }
     response
   }
 }

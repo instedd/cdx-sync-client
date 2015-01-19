@@ -34,23 +34,24 @@ public class Main {
       def db = MapDBDataStore.fromMapDB(dbPath);
       settings = db.settings
     } else {
-      def userSettings = promptForUserSettings()
+      def userSettings = UserSettingsPrompt.promptForUserSettings()
+      def credentials = new Credentials(new File(userSettings.remoteKey))
       def authServer = new SyncAuthServer(userSettings.authToken, userSettings.authServerUrl)
 
-      def serverSettings = authServer.authenticate(userSettings.remotePublicKey)
+      credentials.ensure()
+      def serverSettings = authServer.authenticate(credentials.publicKey)
       settings = merge(userSettings, serverSettings)
 
       def db = MapDBDataStore.fromMapDB(dbPath)
       db.settings = settings
     }
 
-    Credentials.initialize(settings.remoteKey);
-
     def app = new RSyncApplication(settings, appMode)
     app.start(new SystemTrayMonitor(appName, appIcon), new ConsoleMonitor())
 
     printf("\n\n** Now go and create or edit some files on %s **\n\n", settings.localOutboxDir)
   }
+
 
   protected static merge(userSettings, serverSettings) {
     new Settings(
