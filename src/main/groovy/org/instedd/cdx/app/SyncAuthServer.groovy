@@ -16,23 +16,22 @@ public class SyncAuthServer {
     this.authServerUrl = authServerUrl;
   }
 
-  public void authenticate(String publicKey) {
+  def authenticate(String publicKey) {
     def http = new HTTPBuilder(authServerUrl)
-    def r
+    def settings
     http.request( POST, JSON ) {
       uri.path = '/api/activations'
       send URLENC, [public_key: publicKey, token: authToken]
 
       response.success = { resp, json ->
-        println json
-        if ( resp.status == 'success' ) {
-          r =  json.settings
+        if ( json.status == 'success' ) {
+          settings =  json.settings
         } else {
           throw new Exception("Authentication failed: ${json.message}")
         }
       }
     }
-    r
+    settings
   }
 }
 

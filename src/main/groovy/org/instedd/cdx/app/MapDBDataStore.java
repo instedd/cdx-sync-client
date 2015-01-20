@@ -29,7 +29,9 @@ class MapDBDataStore extends StringsSettingsStore {
   }
 
   protected void set(String key, String value) {
-    treeMap.put(key, value);
+    if(value != null) {
+      treeMap.put(key, value);
+    }
   }
 
   public static MapDBDataStore fromMapDB(String databaseFilename) {

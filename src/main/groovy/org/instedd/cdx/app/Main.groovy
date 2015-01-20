@@ -68,11 +68,11 @@ public class Main {
 
   protected static merge(userSettings, serverSettings) {
     new Settings(
-      remoteHost: serverSettings.remoteHost,
-      remotePort: serverSettings.remotePort,
-      remoteUser: serverSettings.remoteUser,
-      remoteInboxDir: serverSettings.remoteInboxDir,
-      remoteOutboxDir: serverSettings.remoteOutboxDir,
+      remoteHost: serverSettings.host,
+      remotePort: serverSettings.port,
+      remoteUser: serverSettings.user,
+      remoteInboxDir: serverSettings.inbox_dir,
+      remoteOutboxDir: serverSettings.outbox_dir,
 
       remoteKey: userSettings.remoteKey,
       knownHostsFilePath: userSettings.knownHostsFilePath,
