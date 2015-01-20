@@ -8,6 +8,9 @@ import java.io.InputStream
 import java.util.Properties
 import java.util.Scanner
 
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+
 import org.instedd.sync4j.Settings
 import org.instedd.sync4j.app.ConsoleMonitor;
 import org.instedd.sync4j.app.RSyncApplication
@@ -34,12 +37,22 @@ public class Main {
       def db = MapDBDataStore.fromMapDB(dbPath);
       settings = db.settings
     } else {
-      def userSettings = UserSettingsPrompt.promptForUserSettings()
-      def credentials = new Credentials(new File(userSettings.remoteKey))
-      def authServer = new SyncAuthServer(userSettings.authToken, userSettings.authServerUrl)
 
-      credentials.ensure()
-      def serverSettings = authServer.authenticate(credentials.publicKey)
+      def serverSettings
+      def userSettings
+      while (true) {
+        userSettings = UserSettingsPrompt.promptForUserSettings()
+        def credentials = new Credentials(new File(userSettings.remoteKey))
+        def authServer = new SyncAuthServer(userSettings.authToken, userSettings.authServerUrl)
+        try {
+          credentials.ensure()
+          serverSettings = authServer.authenticate(credentials.publicKey)
+          break
+        } catch(Exception e) {
+          e.printStackTrace()
+          JOptionPane.showMessageDialog(null, e.message)
+        }
+      }
       settings = merge(userSettings, serverSettings)
 
       def db = MapDBDataStore.fromMapDB(dbPath)
