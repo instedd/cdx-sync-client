@@ -60,13 +60,20 @@ public class Main {
           serverSettings = authServer.authenticate(credentials.publicKey)
           break
         } catch(Exception e) {
-          JOptionPane.showMessageDialog(null, e.message)
+          confirmRetryOrExit(e)
         }
       }
-      JOptionPane.showMessageDialog(null, "Device is now activated");
       db.settings = merge(appSettings, userSettings, serverSettings)
+      JOptionPane.showMessageDialog(null, "Device is now activated");
     }
     db.settings
+  }
+
+  private static confirmRetryOrExit(Exception e) {
+    def result = JOptionPane.showConfirmDialog(null, "${e.message}. Try again?", JOptionPane.YES_NO_OPTION)
+    if (result == JOptionPane.NO_OPTION) {
+      System.exit(1);
+    }
   }
 
   protected static merge(appSettings, userSettings, serverSettings) {

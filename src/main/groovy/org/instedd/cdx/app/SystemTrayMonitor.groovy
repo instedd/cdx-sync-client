@@ -23,9 +23,10 @@ class SystemTrayMonitor  extends org.instedd.sync4j.app.SystemTrayMonitor {
     MenuItem menuItem = new MenuItem("Reconfigure");
     menuItem.addActionListener({
       def result = JOptionPane.showConfirmDialog(null,
-          "This will erease your configurations. Changes will take effect after restart. Would you want to proceed?")
+          "This will erease your configurations. Would you want to proceed?", "Erase configurations?", JOptionPane.YES_NO_OPTION)
       if (result == JOptionPane.YES_OPTION) {
         new File(dbPath).deleteOnExit();
+        JOptionPane.showMessageDialog(null, "Changes will take effect after restart.")
       }
     });
     menu.add(menuItem);
