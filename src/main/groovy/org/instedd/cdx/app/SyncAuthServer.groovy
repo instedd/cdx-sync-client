@@ -27,7 +27,7 @@ public class SyncAuthServer {
         if ( json.status == 'success' ) {
           settings =  json.settings
         } else {
-          throw new Exception("Authentication failed: ${json.message}")
+          throw new Exception("Activation failed: ${json.message}")
         }
       }
     }

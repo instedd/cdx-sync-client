@@ -33,7 +33,12 @@ public class Main {
     def appMode = SyncMode.valueOf(properties['app.mode'].toUpperCase())
     def dbPath = properties['app.dbPath']
 
-    def settings = readOrRequestSettings(dbPath)
+    def appSettings = [
+      authServerUrl: properties['app.server.url'],
+      remoteKey: properties['app.remote.key'],
+      knownHostsFilePath: properties['app.know.hosts.file.path']]
+
+    def settings = readOrRequestSettings(dbPath, appSettings)
 
     def app = new RSyncApplication(settings, appMode)
     app.start(new SystemTrayMonitor(appName, appIcon), new ConsoleMonitor())
@@ -42,15 +47,15 @@ public class Main {
   }
 
 
-  protected static readOrRequestSettings(dbPath) {
+  protected static readOrRequestSettings(dbPath, appSettings) {
     def db = MapDBSettingsStore.fromMapDB(dbPath)
-    if(!db) {
+    if(!db.settings) {
       def serverSettings
       def userSettings
       while (true) {
         userSettings = UserSettingsPrompt.promptForUserSettings()
-        def credentials = new Credentials(new File(userSettings.remoteKey))
-        def authServer = new SyncAuthServer(userSettings.authToken, userSettings.authServerUrl)
+        def credentials = new Credentials(new File(appSettings.remoteKey))
+        def authServer = new SyncAuthServer(userSettings.authToken, appSettings.authServerUrl)
         try {
           credentials.ensure()
           serverSettings = authServer.authenticate(credentials.publicKey)
@@ -59,12 +64,13 @@ public class Main {
           JOptionPane.showMessageDialog(null, e.message)
         }
       }
-      db.settings = merge(userSettings, serverSettings)
+      JOptionPane.showMessageDialog(null, "Device is now activated");
+      db.settings = merge(appSettings, userSettings, serverSettings)
     }
     db.settings
   }
 
-  protected static merge(userSettings, serverSettings) {
+  protected static merge(appSettings, userSettings, serverSettings) {
     new Settings(
       remoteHost: serverSettings.host,
       remotePort: serverSettings.port,
@@ -72,8 +78,9 @@ public class Main {
       remoteInboxDir: serverSettings.inbox_dir,
       remoteOutboxDir: serverSettings.outbox_dir,
 
-      remoteKey: userSettings.remoteKey,
-      knownHostsFilePath: userSettings.knownHostsFilePath,
+      remoteKey: appSettings.remoteKey,
+      knownHostsFilePath: appSettings.knownHostsFilePath,
+
       localInboxDir: userSettings.localInboxDir,
       localOutboxDir: userSettings.localOutboxDir)
   }
