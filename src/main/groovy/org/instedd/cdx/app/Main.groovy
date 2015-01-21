@@ -33,10 +33,19 @@ public class Main {
     def appMode = SyncMode.valueOf(properties['app.mode'].toUpperCase())
     def dbPath = properties['app.dbPath']
 
-    def settings
+    def settings = readOrRequestSettings(dbPath)
+
+    def app = new RSyncApplication(settings, appMode)
+    app.start(new SystemTrayMonitor(appName, appIcon), new ConsoleMonitor())
+
+    printf("\n\n** Now go and create or edit some files on %s **\n\n", settings.localOutboxDir)
+  }
+
+
+  protected static readOrRequestSettings(dbPath) {
     if(new File(dbPath).exists()) {
       def db = MapDBSettingsStore.fromMapDB(dbPath);
-      settings = db.settings
+      db.settings
     } else {
 
       def serverSettings
@@ -53,18 +62,13 @@ public class Main {
           JOptionPane.showMessageDialog(null, e.message)
         }
       }
-      settings = merge(userSettings, serverSettings)
+      def settings = merge(userSettings, serverSettings)
 
       def db = MapDBSettingsStore.fromMapDB(dbPath)
       db.settings = settings
+      settings
     }
-
-    def app = new RSyncApplication(settings, appMode)
-    app.start(new SystemTrayMonitor(appName, appIcon), new ConsoleMonitor())
-
-    printf("\n\n** Now go and create or edit some files on %s **\n\n", settings.localOutboxDir)
   }
-
 
   protected static merge(userSettings, serverSettings) {
     new Settings(
