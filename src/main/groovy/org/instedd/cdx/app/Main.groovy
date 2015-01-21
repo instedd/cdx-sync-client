@@ -43,11 +43,8 @@ public class Main {
 
 
   protected static readOrRequestSettings(dbPath) {
-    if(new File(dbPath).exists()) {
-      def db = MapDBSettingsStore.fromMapDB(dbPath);
-      db.settings
-    } else {
-
+    def db = MapDBSettingsStore.fromMapDB(dbPath)
+    if(!db) {
       def serverSettings
       def userSettings
       while (true) {
@@ -62,12 +59,9 @@ public class Main {
           JOptionPane.showMessageDialog(null, e.message)
         }
       }
-      def settings = merge(userSettings, serverSettings)
-
-      def db = MapDBSettingsStore.fromMapDB(dbPath)
-      db.settings = settings
-      settings
+      db.settings = merge(userSettings, serverSettings)
     }
+    db.settings
   }
 
   protected static merge(userSettings, serverSettings) {
