@@ -37,46 +37,53 @@ public class Main {
       remoteKey: properties['app.remote.key'],
       knownHostsFilePath: properties['app.know.hosts.file.path']]
 
-    def settings = readOrRequestSettings(dbPath, appSettings)
+    def settings = readOrHandshakeSettings(dbPath, appSettings)
 
-    def app = new RSyncApplication(settings, appMode)
-    app.start(new SystemTrayMonitor(appName, appIcon, dbPath), new ConsoleMonitor())
+    startApplication(settings, appMode, appName, appIcon, dbPath)
 
     printf("\n\n** Now go and create or edit some files on %s **\n\n", settings.localOutboxDir)
   }
 
+  static startApplication(settings, SyncMode appMode, appName, URL appIcon, dbPath) {
+    def app = new RSyncApplication(settings, appMode)
+    app.start(new SystemTrayMonitor(appName, appIcon, dbPath), new ConsoleMonitor())
+  }
 
-  protected static readOrRequestSettings(dbPath, appSettings) {
+  static readOrHandshakeSettings(dbPath, appSettings) {
     def db = MapDBSettingsStore.fromMapDB(dbPath)
     if(!db.settings) {
-      def serverSettings
-      def userSettings
-      while (true) {
-        userSettings = UserSettingsPrompt.promptForUserSettings()
-        def credentials = new Credentials(new File(appSettings.remoteKey))
-        def authServer = new SyncAuthServer(userSettings.authToken, appSettings.authServerUrl)
-        try {
-          credentials.ensure()
-          serverSettings = authServer.authenticate(credentials.publicKey)
-          break
-        } catch(Exception e) {
-          confirmRetryOrExit(e)
-        }
-      }
-      db.settings = merge(appSettings, userSettings, serverSettings)
+      db.settings = handshakeSettings(appSettings)
       JOptionPane.showMessageDialog(null, "Device is now activated");
     }
     db.settings
   }
 
-  private static confirmRetryOrExit(Exception e) {
-    def result = JOptionPane.showConfirmDialog(null, "${e.message}. Try again?", JOptionPane.YES_NO_OPTION)
+  static handshakeSettings(appSettings) {
+    def serverSettings
+    def userSettings
+    while (true) {
+      userSettings = UserSettingsPrompt.promptForUserSettings()
+      def credentials = new Credentials(new File(appSettings.remoteKey))
+      def authServer = new SyncAuthServer(userSettings.authToken, appSettings.authServerUrl)
+      try {
+        credentials.ensure()
+        serverSettings = authServer.authenticate(credentials.publicKey)
+        break
+      } catch(Exception e) {
+        confirmRetryOrExit(e)
+      }
+    }
+    merge(appSettings, userSettings, serverSettings)
+  }
+
+  static confirmRetryOrExit(Exception e) {
+    def result = JOptionPane.showConfirmDialog(null, "${e.message}. Try again?", "Try again?", JOptionPane.YES_NO_OPTION)
     if (result == JOptionPane.NO_OPTION) {
       System.exit(1);
     }
   }
 
-  protected static merge(appSettings, userSettings, serverSettings) {
+  static merge(appSettings, userSettings, serverSettings) {
     new Settings(
       remoteHost: serverSettings.host,
       remotePort: serverSettings.port,
@@ -91,7 +98,7 @@ public class Main {
       localOutboxDir: userSettings.localOutboxDir)
   }
 
-  protected static properties(String propertiesFilename) {
+  static properties(String propertiesFilename) {
     def properties = new Properties()
     new File(propertiesFilename).withInputStream { properties.load(it) }
     properties
