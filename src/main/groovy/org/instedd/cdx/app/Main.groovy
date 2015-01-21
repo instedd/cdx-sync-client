@@ -16,6 +16,7 @@ import org.instedd.sync4j.app.ConsoleMonitor;
 import org.instedd.sync4j.app.RSyncApplication
 import org.instedd.sync4j.app.SystemTrayMonitor;
 import org.instedd.sync4j.credentials.Credentials;
+import org.instedd.sync4j.settings.MapDBSettingsStore;
 import org.instedd.sync4j.watcher.RsyncWatchListener.SyncMode
 
 public class Main {
@@ -34,7 +35,7 @@ public class Main {
 
     def settings
     if(new File(dbPath).exists()) {
-      def db = MapDBDataStore.fromMapDB(dbPath);
+      def db = MapDBSettingsStore.fromMapDB(dbPath);
       settings = db.settings
     } else {
 
@@ -49,13 +50,12 @@ public class Main {
           serverSettings = authServer.authenticate(credentials.publicKey)
           break
         } catch(Exception e) {
-          e.printStackTrace()
           JOptionPane.showMessageDialog(null, e.message)
         }
       }
       settings = merge(userSettings, serverSettings)
 
-      def db = MapDBDataStore.fromMapDB(dbPath)
+      def db = MapDBSettingsStore.fromMapDB(dbPath)
       db.settings = settings
     }
 
