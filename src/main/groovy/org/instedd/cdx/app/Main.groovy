@@ -95,7 +95,9 @@ public class Main {
       knownHostsFilePath: appSettings.knownHostsFilePath,
 
       localInboxDir: userSettings.localInboxDir,
-      localOutboxDir: userSettings.localOutboxDir)
+      localOutboxDir: userSettings.localOutboxDir,
+
+      strictHostChecking: false)
   }
 
   static properties(String propertiesFilename) {
