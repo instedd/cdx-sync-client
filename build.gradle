@@ -13,9 +13,9 @@ repositories {
 
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.3.6'
-    compile 'org.instedd:sync4j:0.0.1-SNAPSHOT'
+    compile 'org.instedd:rsync_java_client:0.0.1-SNAPSHOT'
     compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.5.0-RC2'
-    
+
     testCompile 'junit:junit:4.11'
 }
 
@@ -48,7 +48,7 @@ task downloadWinrun4j (dependsOn: 'makeBuildDir') << {
         mkdir buildDir
     }
     println "Downloading ${filename} from ${url} to ${zipDest}..."
-    
+
     ant.get(src: url, dest: zipFile, skipexisting: true, verbose: true)
     delete zipDest
     ant.unzip(src: zipFile, dest: zipDest)
@@ -62,7 +62,7 @@ task downloadJre (dependsOn: 'makeBuildDir') {
 
     def tgzFile = new File(buildDir, filename)
     println "Downloading ${filename} from ${url} to ${tgzFile}..."
-    
+
     ant.get(src: url, dest: tgzFile, skipexisting: true, verbose: true)
 
     ext.jrePackage = tgzFile
@@ -77,7 +77,7 @@ task downloadRsync (dependsOn: 'makeBuildDir') << {
         mkdir buildDir
     }
     println "Downloading ${filename} from ${url} to ${zipDest}..."
-    
+
     ant.get(src: url, dest: zipFile, skipexisting: true, verbose: true)
     delete zipDest
     ant.unzip(src: zipFile, dest: zipDest)
@@ -110,7 +110,7 @@ task prepareNsis {
     copy {
         from file("${buildDir}/winrun4j/winrun4j/bin/WinRun4J.exe")
         from file("${buildDir}/winrun4j/winrun4j/bin/RCEDIT.exe")
-        
+
         into "${workDir}/bin"
     }
     copy {
@@ -133,7 +133,7 @@ task installer {
     def distDir = new File(buildDir, "distributions")
     def nsiScriptName = "installer.nsi"
     def nsisOutput = "${appName}-${platform}-${version}.exe"
-    def installerFile = nsisOutput 
+    def installerFile = nsisOutput
 
     if (prepareNsis.makensisPath.empty) {
         println "warning: makensis not found in your system"

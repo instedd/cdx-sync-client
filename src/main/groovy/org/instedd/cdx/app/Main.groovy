@@ -1,6 +1,6 @@
 package org.instedd.cdx.app
 
-import static org.instedd.sync4j.util.Exceptions.interruptable
+import static org.instedd.rsync_java_client.util.Exceptions.interruptable
 
 import java.io.FileInputStream
 import java.io.IOException
@@ -11,12 +11,12 @@ import java.util.Scanner
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
-import org.instedd.sync4j.Settings
-import org.instedd.sync4j.app.ConsoleMonitor;
-import org.instedd.sync4j.app.RSyncApplication
-import org.instedd.sync4j.credentials.Credentials;
-import org.instedd.sync4j.settings.MapDBSettingsStore;
-import org.instedd.sync4j.watcher.RsyncWatchListener.SyncMode
+import org.instedd.rsync_java_client.Settings
+import org.instedd.rsync_java_client.app.ConsoleMonitor;
+import org.instedd.rsync_java_client.app.RSyncApplication
+import org.instedd.rsync_java_client.credentials.Credentials;
+import org.instedd.rsync_java_client.settings.MapDBSettingsStore;
+import org.instedd.rsync_java_client.watcher.RsyncWatchListener.SyncMode
 
 public class Main {
   public static void main(String[] args) {

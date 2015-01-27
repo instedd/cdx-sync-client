@@ -6,9 +6,9 @@ import java.net.URL;
 
 import javax.swing.JOptionPane;
 
-import org.instedd.sync4j.app.RSyncApplication;
+import org.instedd.rsync_java_client.app.RSyncApplication;
 
-class SystemTrayMonitor  extends org.instedd.sync4j.app.SystemTrayMonitor {
+class SystemTrayMonitor  extends org.instedd.rsync_java_client.app.SystemTrayMonitor {
 
   String dbPath;
 
