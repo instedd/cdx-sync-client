@@ -39,14 +39,14 @@ String getViVersion(String version) {
     return components.join('.')
 }
 
-task downloadWinrun4j (dependsOn: 'makeBuildDir') << {
+task downloadWinrun4j {
+  dependsOn makeBuildDir
+} << {
     def filename = "winrun4J-0.4.4.zip"
     def url = "https://www.dropbox.com/s/i2msc0oi943o5hl/winrun4J-0.4.4.zip?dl=1"
     def zipFile = new File(buildDir, filename)
     def zipDest = new File(buildDir, "winrun4j")
-    if (!buildDir.exists()) {
-        mkdir buildDir
-    }
+
     println "Downloading ${filename} from ${url} to ${zipDest}..."
 
     ant.get(src: url, dest: zipFile, skipexisting: true, verbose: true)
@@ -54,28 +54,30 @@ task downloadWinrun4j (dependsOn: 'makeBuildDir') << {
     ant.unzip(src: zipFile, dest: zipDest)
 }
 
-task downloadJre (dependsOn: 'makeBuildDir') {
+task downloadJre {
+  dependsOn makeBuildDir
 } << {
-    def filename
-    filename = "jre-7u72-windows-i586.gz"
-    def url = "https://www.dropbox.com/s/giwqqcjn6uh5p9l/jre-7u72-windows-i586.gz?dl=1"
+    def filename = "jre1.8.0_31.zip"
+    def url = "https://dl.dropboxusercontent.com/u/41974231/jre1.8.0_31.zip"
+    def zipFile = new File(buildDir, filename)
+    def zipDest = new File(buildDir, "jre")
 
-    def tgzFile = new File(buildDir, filename)
-    println "Downloading ${filename} from ${url} to ${tgzFile}..."
+    println "Downloading ${filename} from ${url} to ${zipFile}..."
 
-    ant.get(src: url, dest: tgzFile, skipexisting: true, verbose: true)
-
-    ext.jrePackage = tgzFile
+    ant.get(src: url, dest: zipFile, skipexisting: true, verbose: true)
+    delete zipDest
+    ant.unzip(src: zipFile, dest: zipDest)
+    ext.jrePackage = zipDest
 }
 
-task downloadRsync (dependsOn: 'makeBuildDir') << {
+task downloadRsync {
+  dependsOn makeBuildDir
+  } << {
     def filename = "cwRsync.zip"
     def url = "https://www.dropbox.com/s/io2ply67jrx1niv/cwRsync.zip?dl=1"
     def zipFile = new File(buildDir, filename)
     def zipDest = new File(buildDir, "cwRsync")
-    if (!buildDir.exists()) {
-        mkdir buildDir
-    }
+
     println "Downloading ${filename} from ${url} to ${zipDest}..."
 
     ant.get(src: url, dest: zipFile, skipexisting: true, verbose: true)
@@ -155,9 +157,9 @@ task installer {
         from file(nsiScriptName)
         into workDir
     }
-    delete file("${workDir}/jre1.7.0_71")
+    delete file("${workDir}/jre1.8.0_31")
     copy {
-        from tarTree(resources.gzip(downloadJre.jrePackage))
+        from downloadJre.jrePackage
         into workDir
     }
 

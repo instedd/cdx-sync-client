@@ -80,7 +80,7 @@ SpaceTexts none
 Section "Install" Install
   SetOutPath "$INSTDIR"
   File "license.txt"
-  File "${PROPS_FILE}" 
+  File "${PROPS_FILE}"
 
   ;Add files
   SetOutPath "$INSTDIR\bin"
@@ -91,7 +91,7 @@ Section "Install" Install
   File "lib\*.jar"
 
   SetOutPath "$INSTDIR\jre"
-  File /r "jre1.7.0_72\*.*"
+  File /r "jre1.8.0_31\*.*"
 
 ; TODO: extract to a $INSTDIR\rsync subdir
   SetOutPath "$INSTDIR"
@@ -112,12 +112,12 @@ Section "Create Shortcuts"
   SetOutPath "$INSTDIR"
 
   ;create desktop shortcut
-  CreateShortCut "$DESKTOP\${MUI_PRODUCT}.lnk" "$INSTDIR\bin\${EXE_NAME}" ""
+  CreateShortCut "$DESKTOP\${MUI_PRODUCT}.lnk" "$INSTDIR\bin\${EXE_NAME}" "${PROPS_FILE}"
 
   ;create start-menu items
   CreateDirectory "$SMPROGRAMS\${START_MENU_GROUP}"
   CreateShortCut "$SMPROGRAMS\${START_MENU_GROUP}\Uninstall.lnk" "$INSTDIR\Uninstall.exe" "" "$INSTDIR\Uninstall.exe" 0
-  CreateShortCut "$SMPROGRAMS\${START_MENU_GROUP}\${MUI_PRODUCT}.lnk" "$INSTDIR\bin\${EXE_NAME}" "" "$INSTDIR\bin\${EXE_NAME}" 0
+  CreateShortCut "$SMPROGRAMS\${START_MENU_GROUP}\${MUI_PRODUCT}.lnk" "$INSTDIR\bin\${EXE_NAME}" "${PROPS_FILE}" "$INSTDIR\bin\${EXE_NAME}" 0
 
 ;write uninstall information to the registry
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${MUI_PRODUCT}" "DisplayName" "${MUI_PRODUCT}"
