@@ -23,7 +23,7 @@ class SystemTrayMonitor  extends org.instedd.rsync_java_client.app.SystemTrayMon
     MenuItem menuItem = new MenuItem("Reconfigure");
     menuItem.addActionListener({
       def result = JOptionPane.showConfirmDialog(null,
-          "This will erease your configurations. Would you want to proceed?", "Erase configurations?", JOptionPane.YES_NO_OPTION)
+          "This will erase your settings. Do you want to proceed?", "Erase setting?", JOptionPane.YES_NO_OPTION)
       if (result == JOptionPane.YES_OPTION) {
         new File(dbPath).deleteOnExit();
         JOptionPane.showMessageDialog(null, "Changes will take effect after restart.")
