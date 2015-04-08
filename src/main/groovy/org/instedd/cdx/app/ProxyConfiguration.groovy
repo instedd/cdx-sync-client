@@ -23,7 +23,9 @@ import org.instedd.rsync_java_client.Settings;
 class ProxyConfiguration {
 
 	private final Logger logger = Logger.getLogger(ProxyConfiguration.class.name)
+	
 	private static String CONFIG_FILE = "cdxproxy.properties"
+	private static ProxyConfiguration detectedConfiguration;  
 	
 	private Properties props;
 	
@@ -77,15 +79,18 @@ class ProxyConfiguration {
 		props != null && props.enabled.toBoolean()
 	}
 	
-	static ProxyConfiguration detect() {
-		def props = new Properties()
-
-		def propsFile = new File(CONFIG_FILE)
-		if (propsFile.exists()) {
-			propsFile.withInputStream { props.load(it) }
+	static synchronized ProxyConfiguration detect() {
+		if (detectedConfiguration == null)  {
+			def props = new Properties()
+			
+			def propsFile = new File(CONFIG_FILE)
+			if (propsFile.exists()) {
+				propsFile.withInputStream { props.load(it) }
+			}
+			
+			detectedConfiguration = new ProxyConfiguration(props);
 		}
-		
-		new ProxyConfiguration(props);
+		return detectedConfiguration
 	}
 
 	static class NTLMSchemeFactory implements AuthSchemeFactory {
