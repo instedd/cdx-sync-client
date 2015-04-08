@@ -84,7 +84,7 @@ public class Main {
   }
 
   static merge(appSettings, userSettings, serverSettings) {
-    new Settings(
+    def settings = new Settings(
       remoteHost: serverSettings.host,
       remotePort: serverSettings.port,
       remoteUser: serverSettings.user,
@@ -98,6 +98,10 @@ public class Main {
       localOutboxDir: userSettings.localOutboxDir,
 
       strictHostChecking: false)
+	
+	ProxyConfiguration.detect().overrideSyncSettings(settings)
+	
+	settings
   }
 
   static properties(String propertiesFilename) {

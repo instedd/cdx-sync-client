@@ -1,5 +1,7 @@
 package org.instedd.cdx.app
 
+import java.util.logging.Logger;
+
 import groovyx.net.http.HTTPBuilder
 import jcifs.ntlmssp.NtlmFlags
 import jcifs.ntlmssp.Type1Message
@@ -16,9 +18,11 @@ import org.apache.http.impl.auth.NTLMEngine
 import org.apache.http.impl.auth.NTLMEngineException
 import org.apache.http.impl.auth.NTLMScheme
 import org.apache.http.params.HttpParams
+import org.instedd.rsync_java_client.Settings;
 
 class ProxyConfiguration {
 
+	private final Logger logger = Logger.getLogger(ProxyConfiguration.class.name)
 	private static String CONFIG_FILE = "cdxproxy.properties"
 	
 	private Properties props;
@@ -28,9 +32,12 @@ class ProxyConfiguration {
 	}
 	
 	void apply(HTTPBuilder http) {
-		if (props != null && props.enabled.toBoolean()) {
+		if (proxyEnabled()) {
 			def host = props.host
 			def port = props.port.toInteger()
+			
+			logger.info("Will use HTTP proxy ${host}:${port} for credentials exchange")
+			
 			def schema = host.indexOf("https") >= 0 ? "https" : "http";
 			http.setProxy(host, port, schema)
 			
@@ -43,15 +50,31 @@ class ProxyConfiguration {
 				
 				def scope = new AuthScope(host, port)
 				def credentials
+				
 				if (user.indexOf('\\') >= 0) {
+					logger.info("Using NT authentication with username ${user}");
 					credentials = new NTCredentials(user.replace('\\', '/') + ":" + pass)
 				} else {
+					logger.info("Using basic authentication with username ${user}");
 					credentials = new UsernamePasswordCredentials(user, pass)
 				}
 				
 				httpClient.credentialsProvider.setCredentials(scope, credentials)
 			}
 		}
+	}
+	
+	void overrideSyncSettings(Settings settings) {
+		if (proxyEnabled()) {
+			logger.info("Overriding rsync host settings because of proxy presence. Make sure to setup a tunnel from ${props.rsyncTunnelHost}:${props.rsyncTunnelPort} to ${settings.remoteHost}:${settings.remotePort}.")
+			
+			settings.remoteHost = props.rsyncTunnelHost
+			settings.remotePort = props.rsyncTunnelPort.toInteger()
+		}
+	}
+	
+	private boolean proxyEnabled() {
+		props != null && props.enabled.toBoolean()
 	}
 	
 	static ProxyConfiguration detect() {
