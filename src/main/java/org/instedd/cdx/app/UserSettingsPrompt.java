@@ -82,13 +82,13 @@ public class UserSettingsPrompt extends JDialog {
             contentPanel.add(authTokenTextBox, gbc_authTokenTextBox);
             authTokenTextBox.setColumns(10);
 
-                        JLabel lblOutboxPath = new JLabel("Inbox Path:");
-                        GridBagConstraints gbc_lblOutboxPath = new GridBagConstraints();
-                        gbc_lblOutboxPath.anchor = GridBagConstraints.WEST;
-                        gbc_lblOutboxPath.insets = new Insets(0, 0, 5, 5);
-                        gbc_lblOutboxPath.gridx = 0;
-                        gbc_lblOutboxPath.gridy = 2;
-                        contentPanel.add(lblOutboxPath, gbc_lblOutboxPath);
+                        JLabel lblInboxPath = new JLabel("Inbox Path:");
+                        GridBagConstraints gbc_lblInboxPath = new GridBagConstraints();
+                        gbc_lblInboxPath.anchor = GridBagConstraints.WEST;
+                        gbc_lblInboxPath.insets = new Insets(0, 0, 5, 5);
+                        gbc_lblInboxPath.gridx = 0;
+                        gbc_lblInboxPath.gridy = 2;
+                        contentPanel.add(lblInboxPath, gbc_lblInboxPath);
 
                                     inboxPathTextField = new JTextField();
                                     inboxPathTextField.setColumns(10);

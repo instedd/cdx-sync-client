@@ -8,14 +8,14 @@ import java.io.InputStream
 import java.util.Properties
 import java.util.Scanner
 
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
+import javax.swing.JDialog
+import javax.swing.JOptionPane
 
 import org.instedd.rsync_java_client.Settings
-import org.instedd.rsync_java_client.app.ConsoleMonitor;
+import org.instedd.rsync_java_client.app.ConsoleMonitor
 import org.instedd.rsync_java_client.app.RSyncApplication
-import org.instedd.rsync_java_client.credentials.Credentials;
-import org.instedd.rsync_java_client.settings.MapDBSettingsStore;
+import org.instedd.rsync_java_client.credentials.Credentials
+import org.instedd.rsync_java_client.settings.MapDBSettingsStore
 import org.instedd.rsync_java_client.watcher.RsyncWatchListener.SyncMode
 
 public class Main {
@@ -30,9 +30,11 @@ public class Main {
     def appName = properties['app.name']
     def appIcon = Main.getResource(properties['app.icon'])
     def appMode = SyncMode.valueOf(properties['app.mode'].toUpperCase())
-    def dbPath = properties['app.dbPath']
+	def rootPath = properties['app.workingPath'] || System.getProperty("user.home")
+    def dbPath = combine(rootPath, properties['app.dbPath'])
 
     def appSettings = [
+	  rootPath: rootPath,
       authServerUrl: properties['app.server.url'],
       remoteKey: properties['app.remote.key'],
       knownHostsFilePath: properties['app.know.hosts.file.path']]
@@ -42,6 +44,13 @@ public class Main {
     startApplication(settings, appMode, appName, appIcon, dbPath)
 
     printf("\n\n** Now go and create or edit some files on %s **\n\n", settings.localOutboxDir)
+  }
+
+  private static String combine(String path1, String path2)
+  {
+    File file1 = new File(path1);
+    File file2 = new File(file1, path2);
+    return file2.getPath();
   }
 
   static startApplication(settings, SyncMode appMode, appName, URL appIcon, dbPath) {
@@ -79,7 +88,7 @@ public class Main {
   static confirmRetryOrExit(Exception e) {
     def result = JOptionPane.showConfirmDialog(null, "${e.message}. Try again?", "Try again?", JOptionPane.YES_NO_OPTION)
     if (result == JOptionPane.NO_OPTION) {
-      System.exit(1);
+      System.exit(1)
     }
   }
 
