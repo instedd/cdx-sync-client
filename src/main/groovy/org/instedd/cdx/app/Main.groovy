@@ -30,16 +30,21 @@ public class Main {
     def appName = properties['app.name']
     def appIcon = Main.getResource(properties['app.icon'])
     def appMode = SyncMode.valueOf(properties['app.mode'].toUpperCase())
-	def rootPath = properties['app.workingPath'] || System.getProperty("user.home")
-    def dbPath = combine(rootPath, properties['app.dbPath'])
+    def rootPath = properties['app.root_path']
+
+    def settings = new Settings(appName, rootPath)
+    def dbPath = settings.rootPath.resolve("settingsdb").toString()
 
     def appSettings = [
-	  rootPath: rootPath,
+  	  rootPath: settings.rootPath,
       authServerUrl: properties['app.server.url'],
-      remoteKey: properties['app.remote.key'],
-      knownHostsFilePath: properties['app.know.hosts.file.path']]
+      remoteKey: settings.getRemoteKeyPath(),
+      knownHostsFilePath: properties['app.know.hosts.file.path']
+    ]
 
-    def settings = readOrHandshakeSettings(dbPath, appSettings)
+    printf("rootPath: %s \n", settings.rootPath)
+
+    settings = readOrHandshakeSettings(dbPath, appSettings)
 
     startApplication(settings, appMode, appName, appIcon, dbPath)
 
