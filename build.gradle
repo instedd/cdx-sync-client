@@ -98,6 +98,37 @@ task downloadRsync {
     ant.unzip(src: zipFile, dest: zipDest)
 }
 
+task winApp {
+    dependsOn cleanInstallApp
+    dependsOn installApp
+    dependsOn downloadWinrun4j
+    dependsOn downloadRsync
+    dependsOn downloadJre
+} << {
+    def workDir = installApp.destinationDir
+
+    copy {
+        from "${downloadJre.jrePackage}/jre1.8.0_31"
+        into "${workDir}/jre"
+    }
+
+    copy {
+        from file("${buildDir}/winrun4j/winrun4j/bin/WinRun4J.exe")
+        into "${workDir}/bin"
+        rename "WinRun4J.exe", "cdx-client.exe"
+    }
+
+    copy {
+        from file("dist/${appName}-client.ini")
+        into "${workDir}/bin/"
+    }
+
+    copy {
+      from file("dist/cdxsync.properties")
+      into workDir
+    }
+}
+
 task prepareNsis {
     dependsOn cleanInstallApp
     dependsOn installApp
