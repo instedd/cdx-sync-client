@@ -7,6 +7,9 @@ import java.io.IOException
 import java.io.InputStream
 import java.util.Properties
 import java.util.Scanner
+import java.util.logging.FileHandler
+import java.util.logging.Logger
+import java.util.logging.Level
 
 import javax.swing.JDialog
 import javax.swing.JOptionPane
@@ -19,6 +22,8 @@ import org.instedd.rsync_java_client.settings.MapDBSettingsStore
 import org.instedd.rsync_java_client.watcher.RsyncWatchListener.SyncMode
 
 public class Main {
+  private static final Logger logger = Logger.getLogger(Main.class.getName());
+
   public static void main(String[] args) {
     if (args.length != 1) {
       println("Usage: cdxsync <properties filename>")
@@ -35,6 +40,18 @@ public class Main {
     def settings = new Settings(appName, rootPath)
     def dbPath = settings.rootPath.resolve("settingsdb").toString()
 
+    // Setup logging
+    def logPath = settings.rootPath.resolve(appName + ".log").toString()
+    def fileHandler = new FileHandler(logPath, 1024 * 1024, 5, true)
+    def rootLogger = Logger.getLogger("")
+    rootLogger.addHandler(fileHandler)
+    def logFormatter = new LogFormatter()
+    for (handler in rootLogger.getHandlers()) {
+      handler.formatter = logFormatter
+    }
+
+    logger.info("Starting application")
+
     def appSettings = [
   	  rootPath: settings.rootPath,
       authServerUrl: properties['app.server.url'],
@@ -42,7 +59,8 @@ public class Main {
       knownHostsFilePath: properties['app.know.hosts.file.path']
     ]
 
-    printf("rootPath: %s \n", settings.rootPath)
+    logger.info("Data directory path: " + settings.rootPath)
+    logger.info("Auth server URL: " + appSettings['authServerUrl'])
 
     settings = readOrHandshakeSettings(dbPath, appSettings)
 
@@ -81,9 +99,13 @@ public class Main {
       def authServer = new SyncAuthServer(userSettings.authToken, appSettings.authServerUrl)
       try {
         credentials.ensure()
+
+        logger.info("Activating to '" + appSettings.authServerUrl + "' with auth token '" + userSettings.authToken + "'")
         serverSettings = authServer.authenticate(credentials.publicKey)
+        logger.info("Activation succeeded")
         break
       } catch(Exception e) {
+        logger.log(Level.WARNING, "Activation failed", e)
         confirmRetryOrExit(e)
       }
     }
