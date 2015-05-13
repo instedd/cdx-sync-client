@@ -7,9 +7,10 @@ import java.io.IOException
 import java.io.InputStream
 import java.util.Properties
 import java.util.Scanner
-import java.util.logging.FileHandler
-import java.util.logging.Logger
-import java.util.logging.Level
+
+import org.apache.log4j.*
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 
 import javax.swing.JDialog
 import javax.swing.JOptionPane
@@ -22,7 +23,7 @@ import org.instedd.rsync_java_client.settings.MapDBSettingsStore
 import org.instedd.rsync_java_client.watcher.RsyncWatchListener.SyncMode
 
 public class Main {
-  private static final Logger logger = Logger.getLogger(Main.class.getName());
+  private static final Log log = LogFactory.getLog(Main.class);
 
   public static void main(String[] args) {
     if (args.length != 1) {
@@ -41,16 +42,17 @@ public class Main {
     def dbPath = settings.rootPath.resolve("settingsdb").toString()
 
     // Setup logging
-    def logPath = settings.rootPath.resolve(appName + ".log").toString()
-    def fileHandler = new FileHandler(logPath, 1024 * 1024, 5, true)
-    def rootLogger = Logger.getLogger("")
-    rootLogger.addHandler(fileHandler)
-    def logFormatter = new LogFormatter()
-    for (handler in rootLogger.getHandlers()) {
-      handler.formatter = logFormatter
-    }
+    RollingFileAppender appender = new RollingFileAppender()
+    String PATTERN = "%d [%p] %m%n"
+    appender.setLayout(new PatternLayout(PATTERN))
+    appender.setThreshold(Level.INFO)
+    appender.setFile(settings.rootPath.resolve(appName + ".log").toString())
+    appender.setMaxFileSize("1MB")
+    appender.setMaxBackupIndex(5)
+    appender.activateOptions()
+    Logger.getRootLogger().addAppender(appender)
 
-    logger.info("Starting application")
+    log.info("Starting application")
 
     def appSettings = [
   	  rootPath: settings.rootPath,
@@ -59,8 +61,8 @@ public class Main {
       knownHostsFilePath: properties['app.know.hosts.file.path'] ?: settings.knownHostsFilePath
     ]
 
-    logger.info("Data directory path: " + settings.rootPath)
-    logger.info("Auth server URL: " + appSettings['authServerUrl'])
+    log.info("Data directory path: " + settings.rootPath)
+    log.info("Auth server URL: " + appSettings['authServerUrl'])
 
     settings = readOrHandshakeSettings(dbPath, appSettings)
 
@@ -100,12 +102,12 @@ public class Main {
       try {
         credentials.ensure()
 
-        logger.info("Activating to '" + appSettings.authServerUrl + "' with auth token '" + userSettings.authToken + "'")
+        log.info("Activating to '" + appSettings.authServerUrl + "' with auth token '" + userSettings.authToken + "'")
         serverSettings = authServer.authenticate(credentials.publicKey)
-        logger.info("Activation succeeded")
+        log.info("Activation succeeded")
         break
       } catch(Exception e) {
-        logger.log(Level.WARNING, "Activation failed", e)
+        log.warn("Activation failed", e)
         confirmRetryOrExit(e)
       }
     }
