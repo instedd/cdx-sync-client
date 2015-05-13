@@ -127,6 +127,11 @@ task winApp {
       from file("dist/cdxsync.properties")
       into workDir
     }
+
+    copy {
+        from "${buildDir}/cwRsync/cwRsync/bin/"
+        into workDir
+    }
 }
 
 task prepareNsis {
