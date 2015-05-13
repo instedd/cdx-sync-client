@@ -56,7 +56,7 @@ public class Main {
   	  rootPath: settings.rootPath,
       authServerUrl: properties['app.server.url'],
       remoteKey: settings.getRemoteKeyPath(),
-      knownHostsFilePath: properties['app.know.hosts.file.path']
+      knownHostsFilePath: properties['app.know.hosts.file.path'] ?: settings.knownHostsFilePath
     ]
 
     logger.info("Data directory path: " + settings.rootPath)
