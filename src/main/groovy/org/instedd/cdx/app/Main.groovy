@@ -46,7 +46,8 @@ public class Main {
     String PATTERN = "%d [%p] %m%n"
     appender.setLayout(new PatternLayout(PATTERN))
     appender.setThreshold(Level.INFO)
-    appender.setFile(settings.rootPath.resolve(appName + ".log").toString())
+    def logPath = settings.rootPath.resolve(appName + ".log").toString()
+    appender.setFile(logPath)
     appender.setMaxFileSize("1MB")
     appender.setMaxBackupIndex(5)
     appender.activateOptions()
@@ -66,7 +67,7 @@ public class Main {
 
     settings = readOrHandshakeSettings(dbPath, appSettings)
 
-    startApplication(settings, appMode, appName, appIcon, dbPath)
+    startApplication(settings, appMode, appName, appIcon, dbPath, logPath)
 
     printf("\n\n** Now go and create or edit some files on %s **\n\n", settings.localOutboxDir)
   }
@@ -78,9 +79,9 @@ public class Main {
     return file2.getPath();
   }
 
-  static startApplication(settings, SyncMode appMode, appName, URL appIcon, dbPath) {
+  static startApplication(settings, SyncMode appMode, appName, URL appIcon, dbPath, logPath) {
     def app = new RSyncApplication(settings, appMode)
-    app.start(new SystemTrayMonitor(appName, appIcon, dbPath), new ConsoleMonitor())
+    app.start(new SystemTrayMonitor(appName, appIcon, dbPath, logPath), new ConsoleMonitor())
   }
 
   static readOrHandshakeSettings(dbPath, appSettings) {
