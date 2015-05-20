@@ -49,49 +49,55 @@ String getViVersion(String version) {
 }
 
 task downloadWinrun4j {
-  dependsOn makeBuildDir
-} << {
+    dependsOn makeBuildDir
     def filename = "winrun4J-0.4.4.zip"
     def url = "https://www.dropbox.com/s/i2msc0oi943o5hl/winrun4J-0.4.4.zip?dl=1"
     def zipFile = new File(buildDir, filename)
     def zipDest = new File(buildDir, "winrun4j")
+    outputs.dir zipDest
 
-    println "Downloading ${filename} from ${url} to ${zipDest}..."
+    doLast {
+        println "Downloading ${filename} from ${url} to ${zipDest}..."
 
-    ant.get(src: url, dest: zipFile, skipexisting: true, verbose: true)
-    delete zipDest
-    ant.unzip(src: zipFile, dest: zipDest)
+        ant.get(src: url, dest: zipFile, skipexisting: true, verbose: true)
+        delete zipDest
+        ant.unzip(src: zipFile, dest: zipDest)
+    }
 }
 
 task downloadJre {
-  dependsOn makeBuildDir
-} << {
+    dependsOn makeBuildDir
     def filename = "jre1.8.0_31.zip"
     def url = "https://dl.dropboxusercontent.com/u/41974231/jre1.8.0_31.zip"
     def zipFile = new File(buildDir, filename)
     def zipDest = new File(buildDir, "jre")
-
-    println "Downloading ${filename} from ${url} to ${zipFile}..."
-
-    ant.get(src: url, dest: zipFile, skipexisting: true, verbose: true)
-    delete zipDest
-    ant.unzip(src: zipFile, dest: zipDest)
+    outputs.dir zipDest
     ext.jrePackage = zipDest
+
+    doLast {
+        println "Downloading ${filename} from ${url} to ${zipFile}..."
+
+        ant.get(src: url, dest: zipFile, skipexisting: true, verbose: true)
+        delete zipDest
+        ant.unzip(src: zipFile, dest: zipDest)
+    }
 }
 
 task downloadRsync {
-  dependsOn makeBuildDir
-  } << {
+    dependsOn makeBuildDir
     def filename = "cwRsync.zip"
     def url = "https://www.dropbox.com/s/io2ply67jrx1niv/cwRsync.zip?dl=1"
     def zipFile = new File(buildDir, filename)
     def zipDest = new File(buildDir, "cwRsync")
+    outputs.dir zipDest
 
-    println "Downloading ${filename} from ${url} to ${zipDest}..."
+    doLast {
+        println "Downloading ${filename} from ${url} to ${zipDest}..."
 
-    ant.get(src: url, dest: zipFile, skipexisting: true, verbose: true)
-    delete zipDest
-    ant.unzip(src: zipFile, dest: zipDest)
+        ant.get(src: url, dest: zipFile, skipexisting: true, verbose: true)
+        delete zipDest
+        ant.unzip(src: zipFile, dest: zipDest)
+    }
 }
 
 task winApp {
