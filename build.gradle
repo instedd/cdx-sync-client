@@ -1,8 +1,3 @@
-/*
- * Copied from https://raw.githubusercontent.com/instedd/act/master/client/build.gradle
- */
-
-apply plugin: 'groovy'
 apply plugin: 'eclipse'
 apply plugin: 'application'
 
@@ -26,11 +21,9 @@ project(':rsync_java_client') {
 }
 
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.3.6'
     compile project(':rsync_java_client')
-    compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.5.0-RC2'
     compile 'log4j:log4j:1.2.17'
-	compile 'jcifs:jcifs:1.3.17'
+    compile 'com.mashape.unirest:unirest-java:1.4.5'
 
     testCompile 'junit:junit:4.11'
 }
