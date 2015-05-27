@@ -1,25 +1,44 @@
 package org.instedd.cdx.app;
 
 import java.awt.Desktop;
+import java.awt.Image;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
+import java.awt.Toolkit;
+import java.awt.TrayIcon.MessageType;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
 import org.instedd.rsync_java_client.app.RSyncApplication;
+import org.instedd.rsync_java_client.RsyncSynchronizerListener;
 
-public class SystemTrayMonitor extends org.instedd.rsync_java_client.app.SystemTrayMonitor {
+public class SystemTrayMonitor extends org.instedd.rsync_java_client.app.SystemTrayMonitor
+  implements RsyncSynchronizerListener {
 
   private String dbPath;
   private String logPath;
+  private Thread animationThread;
+  private final Image[] animationIcons;
+  private final Image defaultIcon;
+  private final Image failIcon;
+  private boolean failed;
 
-  public SystemTrayMonitor(String tooltip, URL imageUrl, String dbPath, String logPath) {
-    super(tooltip, imageUrl);
+  public SystemTrayMonitor(String tooltip, String dbPath, String logPath) {
+    super(tooltip, SystemTrayMonitor.class.getResource("/icon-0.png"));
     this.dbPath = dbPath;
     this.logPath = logPath;
+
+
+    animationIcons = new Image[3];
+    Toolkit toolkit = Toolkit.getDefaultToolkit();
+    animationIcons[0] = toolkit.getImage(SystemTrayMonitor.class.getResource("/icon-60.png"));
+    animationIcons[1] = toolkit.getImage(SystemTrayMonitor.class.getResource("/icon-120.png"));
+    animationIcons[2] = defaultIcon = toolkit.getImage(SystemTrayMonitor.class.getResource("/icon-0.png"));
+    failIcon = toolkit.getImage(SystemTrayMonitor.class.getResource("/icon-red.png"));
   }
 
   @Override
@@ -46,5 +65,52 @@ public class SystemTrayMonitor extends org.instedd.rsync_java_client.app.SystemT
       }
     });
     menu.add(menuItem);
+  }
+
+  @Override
+  public void transferStarted() {
+    failed = false;
+
+    if (animationThread != null) {
+      animationThread.interrupt();
+    }
+
+    animationThread = new Thread(() -> {
+      try {
+        while (true) {
+          for (int i = 0; i < animationIcons.length; i++) {
+            getTrayIcon().setImage(animationIcons[i]);
+            Thread.sleep(300);
+          }
+        }
+      } catch (InterruptedException e) {
+        // End of the animation
+      }
+
+      getTrayIcon().setImage(failed ? failIcon : defaultIcon);
+      animationThread = null;
+    });
+    animationThread.start();
+  }
+
+  @Override
+  public void transferFailed(String errorMessage) {
+    getTrayIcon().displayMessage("Transfer Failed", null, MessageType.ERROR);
+    failed = true;
+    animationThread.interrupt();
+  }
+
+  @Override
+  public void transferCompleted(List<String> uploadedFiles, List<String> downloadedFiles) {
+    StringBuilder message = new StringBuilder();
+    if (uploadedFiles != null) {
+      message.append(uploadedFiles.size()).append(" file(s) uploaded:");
+      message.append("\n");
+      for (String file : uploadedFiles) {
+        message.append("  - ").append(file);
+      }
+    }
+    getTrayIcon().displayMessage("Transfer Completed", message.toString(), MessageType.INFO);
+    animationThread.interrupt();
   }
 }

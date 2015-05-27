@@ -11,6 +11,7 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.EnumSet;
 import java.nio.file.Files;
 
 import org.apache.log4j.*;
@@ -21,11 +22,11 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 import org.instedd.rsync_java_client.Settings;
+import org.instedd.rsync_java_client.SyncMode;
 import org.instedd.rsync_java_client.app.ConsoleMonitor;
 import org.instedd.rsync_java_client.app.RSyncApplication;
 import org.instedd.rsync_java_client.credentials.Credentials;
 import org.instedd.rsync_java_client.settings.MapDBSettingsStore;
-import org.instedd.rsync_java_client.watcher.RsyncWatchListener.SyncMode;
 
 import org.json.JSONObject;
 
@@ -42,8 +43,6 @@ public class Main {
     Properties properties = properties(propertiesFilename);
 
     String appName = properties.getProperty("app.name");
-    URL appIcon = Main.class.getResource(properties.getProperty("app.icon"));
-    SyncMode appMode = SyncMode.valueOf(properties.getProperty("app.mode").toUpperCase());
     String rootPath = properties.getProperty("app.root_path");
 
     Settings settings = new Settings(appName, rootPath);
@@ -74,7 +73,7 @@ public class Main {
 
     settings = readOrHandshakeSettings(dbPath, appSettings);
 
-    startApplication(settings, appMode, appName, appIcon, dbPath, logPath);
+    startApplication(settings, appName, dbPath, logPath);
 
     System.out.printf("\n\n** Now go and create or edit some files on %s **\n\n", settings.localOutboxDir);
   }
@@ -86,9 +85,9 @@ public class Main {
     return file2.getPath();
   }
 
-  static void startApplication(Settings settings, SyncMode appMode, String appName, URL appIcon, String dbPath, String logPath) {
-    RSyncApplication app = new RSyncApplication(settings, appMode);
-    app.start(new SystemTrayMonitor(appName, appIcon, dbPath, logPath), new ConsoleMonitor());
+  static void startApplication(Settings settings, String appName, String dbPath, String logPath) {
+    RSyncApplication app = new RSyncApplication(settings, EnumSet.of(SyncMode.UPLOAD));
+    app.start(new SystemTrayMonitor(appName, dbPath, logPath), new ConsoleMonitor());
   }
 
   static Settings readOrHandshakeSettings(String dbPath, Map<String, String> appSettings) {
