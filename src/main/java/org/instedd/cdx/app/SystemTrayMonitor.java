@@ -95,7 +95,7 @@ public class SystemTrayMonitor extends org.instedd.rsync_java_client.app.SystemT
 
   @Override
   public void transferFailed(String errorMessage) {
-    getTrayIcon().displayMessage("Transfer Failed", null, MessageType.ERROR);
+    getTrayIcon().displayMessage("Transfer Failed\t", null, MessageType.ERROR);
     failed = true;
     animationThread.interrupt();
   }
@@ -110,7 +110,7 @@ public class SystemTrayMonitor extends org.instedd.rsync_java_client.app.SystemT
         message.append("  - ").append(file);
       }
     }
-    getTrayIcon().displayMessage("Transfer Completed", message.toString(), MessageType.INFO);
+    getTrayIcon().displayMessage("Transfer Completed\t", message.toString(), MessageType.INFO);
     animationThread.interrupt();
   }
 }
