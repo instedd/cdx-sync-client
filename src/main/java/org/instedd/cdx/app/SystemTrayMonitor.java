@@ -99,6 +99,11 @@ public class SystemTrayMonitor extends org.instedd.rsync_java_client.app.SystemT
 
   @Override
   public void transferCompleted(List<String> uploadedFiles, List<String> downloadedFiles) {
+    animationThread.interrupt();
+
+    if ((uploadedFiles == null || uploadedFiles.size() == 0) &&
+        (downloadedFiles == null || downloadedFiles.size() == 0)) { return; }
+
     StringBuilder message = new StringBuilder();
     if (uploadedFiles != null) {
       message.append(uploadedFiles.size()).append(" file(s) uploaded:");
@@ -108,6 +113,5 @@ public class SystemTrayMonitor extends org.instedd.rsync_java_client.app.SystemT
       }
     }
     getTrayIcon().displayMessage("Transfer Completed\t", message.toString(), MessageType.INFO);
-    animationThread.interrupt();
   }
 }
