@@ -2,33 +2,16 @@ package org.instedd.cdx.app;
 
 import static org.instedd.rsync_java_client.util.Exceptions.interruptable;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Scanner;
 import java.util.EnumSet;
-import java.nio.file.Files;
 
 import org.apache.log4j.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-
-import org.instedd.rsync_java_client.Settings;
 import org.instedd.rsync_java_client.SyncMode;
 import org.instedd.rsync_java_client.app.ConsoleMonitor;
 import org.instedd.rsync_java_client.app.RSyncApplication;
-import org.instedd.rsync_java_client.credentials.Credentials;
-import org.instedd.rsync_java_client.settings.MapDBSettingsStore;
-
-import org.json.JSONObject;
 
 public class Main {
   private static final Log log = LogFactory.getLog(Main.class);
