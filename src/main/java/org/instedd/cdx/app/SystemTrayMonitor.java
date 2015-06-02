@@ -19,19 +19,16 @@ import org.instedd.rsync_java_client.RsyncSynchronizerListener;
 public class SystemTrayMonitor extends org.instedd.rsync_java_client.app.SystemTrayMonitor
   implements RsyncSynchronizerListener {
 
-  private String dbPath;
-  private String logPath;
+  private CDXSettings settings;
   private Thread animationThread;
   private final Image[] animationIcons;
   private final Image defaultIcon;
   private final Image failIcon;
   private boolean failed;
 
-  public SystemTrayMonitor(String tooltip, String dbPath, String logPath) {
-    super(tooltip, SystemTrayMonitor.class.getResource("/icon-0.png"));
-    this.dbPath = dbPath;
-    this.logPath = logPath;
-
+  public SystemTrayMonitor(CDXSettings settings) {
+    super(settings.appName, SystemTrayMonitor.class.getResource("/icon-0.png"));
+    this.settings = settings;
 
     animationIcons = new Image[3];
     Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -45,21 +42,21 @@ public class SystemTrayMonitor extends org.instedd.rsync_java_client.app.SystemT
   protected void configureMenu(RSyncApplication application, PopupMenu menu) {
     super.configureMenu(application, menu);
 
-    MenuItem menuItem = new MenuItem("Reconfigure");
+    MenuItem menuItem = new MenuItem("Settings...");
     menuItem.addActionListener((e) -> {
-      int result = JOptionPane.showConfirmDialog(null,
-          "This will erase your settings. Do you want to proceed?", "Erase setting?", JOptionPane.YES_NO_OPTION);
-      if (result == JOptionPane.YES_OPTION) {
-        new File(dbPath).deleteOnExit();
-        JOptionPane.showMessageDialog(null, "Changes will take effect after restart.");
+      try {
+        if (SettingsDialog.editSettings(settings)) {
+        }
+      } catch (IOException ex) {
+
       }
     });
     menu.add(menuItem);
 
     menuItem = new MenuItem("View Log...");
-    menuItem.addActionListener((e ) -> {
+    menuItem.addActionListener((e) -> {
       try {
-        Desktop.getDesktop().open(new File(logPath));
+        Desktop.getDesktop().open(new File(settings.logPath()));
       } catch (IOException ex) {
 
       }
