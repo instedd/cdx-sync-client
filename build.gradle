@@ -15,7 +15,6 @@ project(':rsync_java_client') {
         compile 'commons-lang:commons-lang:2.3'
         compile 'commons-io:commons-io:2.4'
         compile 'commons-logging:commons-logging:1.2'
-        compile 'org.mapdb:mapdb:1.0.6'
         testCompile "junit:junit:4.12"
     }
 }
