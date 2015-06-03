@@ -46,6 +46,7 @@ public class SystemTrayMonitor extends org.instedd.rsync_java_client.app.SystemT
     menuItem.addActionListener((e) -> {
       try {
         if (SettingsDialog.editSettings(settings)) {
+          application.restart();
         }
       } catch (IOException ex) {
 

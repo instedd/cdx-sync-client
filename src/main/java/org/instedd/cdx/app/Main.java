@@ -63,7 +63,9 @@ public class Main {
 
   static void startApplication(CDXSettings settings) {
     RSyncApplication app = new RSyncApplication(settings, EnumSet.of(SyncMode.UPLOAD));
-    app.start(new SystemTrayMonitor(settings), new ConsoleMonitor());
+    app.addMonitor(new SystemTrayMonitor(settings));
+    app.addMonitor(new ConsoleMonitor());
+    app.start();
   }
 
 }
