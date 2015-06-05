@@ -4,6 +4,7 @@ import static org.instedd.rsync_java_client.util.Exceptions.interruptable;
 
 import java.io.IOException;
 import java.util.EnumSet;
+import javax.swing.UIManager;
 
 import org.apache.log4j.*;
 import org.apache.commons.logging.Log;
@@ -17,6 +18,12 @@ public class Main {
   private static final Log log = LogFactory.getLog(Main.class);
 
   public static void main(String[] args) {
+    try {
+      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+    } catch (Exception e) {
+
+    }
+
     CDXSettings settings = new CDXSettings();
 
     // Setup logging
