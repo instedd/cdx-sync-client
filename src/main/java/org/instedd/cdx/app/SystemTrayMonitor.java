@@ -2,8 +2,6 @@ package org.instedd.cdx.app;
 
 import java.awt.Desktop;
 import java.awt.Image;
-import java.awt.MenuItem;
-import java.awt.PopupMenu;
 import java.awt.Toolkit;
 import java.awt.TrayIcon.MessageType;
 import java.io.File;
@@ -11,7 +9,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 import org.instedd.rsync_java_client.app.RSyncApplication;
 import org.instedd.rsync_java_client.RsyncSynchronizerListener;
@@ -39,10 +37,10 @@ public class SystemTrayMonitor extends org.instedd.rsync_java_client.app.SystemT
   }
 
   @Override
-  protected void configureMenu(RSyncApplication application, PopupMenu menu) {
+  protected void configureMenu(RSyncApplication application, JPopupMenu menu) {
     super.configureMenu(application, menu);
 
-    MenuItem menuItem = new MenuItem("Settings...");
+    JMenuItem menuItem = new JMenuItem("Settings...");
     menuItem.addActionListener((e) -> {
       try {
         if (SettingsDialog.editSettings(settings)) {
@@ -54,7 +52,7 @@ public class SystemTrayMonitor extends org.instedd.rsync_java_client.app.SystemT
     });
     menu.add(menuItem);
 
-    menuItem = new MenuItem("View Log...");
+    menuItem = new JMenuItem("View Log...");
     menuItem.addActionListener((e) -> {
       try {
         Desktop.getDesktop().open(new File(settings.logPath()));
@@ -65,42 +63,59 @@ public class SystemTrayMonitor extends org.instedd.rsync_java_client.app.SystemT
     menu.add(menuItem);
   }
 
-  @Override
-  public void transferStarted() {
-    failed = false;
-
-    if (animationThread != null) {
-      animationThread.interrupt();
-    }
-
-    animationThread = new Thread(() -> {
-      try {
-        while (true) {
-          for (int i = 0; i < animationIcons.length; i++) {
-            getTrayIcon().setImage(animationIcons[i]);
-            Thread.sleep(300);
-          }
-        }
-      } catch (InterruptedException e) {
-        // End of the animation
+  private void startAnimation() {
+    synchronized (this) {
+      if (animationThread != null) {
+        animationThread.interrupt();
       }
 
-      getTrayIcon().setImage(failed ? failIcon : defaultIcon);
-      animationThread = null;
-    });
-    animationThread.start();
+      Thread newAnimationThread = new Thread(() -> {
+        try {
+          while (true) {
+            for (int i = 0; i < animationIcons.length; i++) {
+              getTrayIcon().setImage(animationIcons[i]);
+              Thread.sleep(300);
+            }
+          }
+        } catch (InterruptedException e) {
+          // End of the animation
+        }
+
+        getTrayIcon().setImage(failed ? failIcon : defaultIcon);
+        animationThread = null;
+      });
+      newAnimationThread.start();
+      animationThread = newAnimationThread;
+    }
+  }
+
+  private void stopAnimation() {
+    synchronized (this) {
+      if (animationThread != null) {
+        animationThread.interrupt();
+      }
+    }
+  }
+
+  @Override
+  public void transferStarted() {
+    super.transferStarted();
+    failed = false;
+    startAnimation();
   }
 
   @Override
   public void transferFailed(String errorMessage) {
+    super.transferFailed(errorMessage);
     getTrayIcon().displayMessage("Transfer Failed\t", null, MessageType.ERROR);
     failed = true;
-    animationThread.interrupt();
+    stopAnimation();
   }
 
   @Override
   public void transferCompleted(List<String> uploadedFiles, List<String> downloadedFiles) {
-    animationThread.interrupt();
+    super.transferCompleted(uploadedFiles, downloadedFiles);
+    stopAnimation();
 
     if ((uploadedFiles == null || uploadedFiles.size() == 0) &&
         (downloadedFiles == null || downloadedFiles.size() == 0)) { return; }
