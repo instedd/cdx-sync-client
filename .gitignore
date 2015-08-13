@@ -7,3 +7,4 @@ target/**
 build/**
 /bin/
 .vagrant/
+/rsync_java_client/
