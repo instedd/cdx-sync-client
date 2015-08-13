@@ -168,6 +168,8 @@ task prepareNsis {
     }
     copy {
         from file("dist/nsis/plugins/ExecDos.dll")
+        from file("dist/nsis/plugins/UAC.dll")
+        from file("dist/nsis/include/UAC.nsh")
         into "${workDir}/nsis"
     }
     copy {

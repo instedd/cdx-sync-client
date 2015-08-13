@@ -8,10 +8,15 @@ CRCCheck On
 ;--------------------------------
 ;Plugins dir
 !addplugindir nsis
+;--------------------------------
+;Includes dir
+!addincludedir nsis
 
 ;--------------------------------
 ;Include Modern UI
 !include "MUI2.nsh"
+!include "UAC.nsh"
+!include "FileFunc.nsh"
 
 ;---------------------------------
 ;General
@@ -20,6 +25,8 @@ Name "${MUI_PRODUCT}"
 BrandingText "${MUI_PRODUCT} v${VERSION}"
 
 OutFile "${APP_NAME}-${PLATFORM}-${VERSION}.exe"
+
+RequestExecutionLevel user
 
 ShowInstDetails "nevershow"
 ShowUninstDetails "nevershow"
@@ -38,6 +45,10 @@ ShowUninstDetails "nevershow"
 
 ;Get installation folder from registry if available
 InstallDirRegKey HKLM "${APP_REGKEY}" "${INSTALL_DIR_REGNAME}"
+
+!define MUI_FINISHPAGE_RUN
+!define MUI_FINISHPAGE_RUN_TEXT "Launch ${MUI_PRODUCT}"
+!define MUI_FINISHPAGE_RUN_FUNCTION StartApp
 
 ;--------------------------------
 ;Exe details
@@ -63,6 +74,7 @@ VIAddVersionKey LegalTrademarks  "CDX"
 
 !insertmacro MUI_PAGE_LICENSE "license.txt"
 !insertmacro MUI_PAGE_INSTFILES
+!insertmacro MUI_PAGE_FINISH
 
 SpaceTexts none
 !define MUI_COMPONENTSPAGE_NODESC
@@ -73,6 +85,65 @@ SpaceTexts none
 ;Languages
 
 !insertmacro MUI_LANGUAGE "English"
+
+;--------------------------------
+;Macros
+
+!macro UacInit thing
+uac_tryagain:
+!insertmacro UAC_RunElevated
+${Switch} $0
+${Case} 0
+	${IfThen} $1 = 1 ${|} Quit ${|} ;we are the outer process, the inner process has done its work, we are done
+	${IfThen} $3 <> 0 ${|} ${Break} ${|} ;we are admin, let the show go on
+	${If} $1 = 3 ;RunAs completed successfully, but with a non-admin user
+		MessageBox mb_YesNo|mb_IconExclamation|mb_TopMost|mb_SetForeground "This ${thing} requires admin privileges, try again" /SD IDNO IDYES uac_tryagain IDNO 0
+	${EndIf}
+	;fall-through and die
+${Case} 1223
+	MessageBox mb_IconStop|mb_TopMost|mb_SetForeground "This ${thing} requires admin privileges, aborting!"
+	Quit
+${Case} 1062
+	MessageBox mb_IconStop|mb_TopMost|mb_SetForeground "Logon service not running, aborting!"
+	Quit
+${Default}
+	MessageBox mb_IconStop|mb_TopMost|mb_SetForeground "Unable to elevate, error $0"
+	Quit
+${EndSwitch}
+
+SetShellVarContext all
+!macroend
+
+;--------------------------------
+;Functions
+
+Function StartApp
+  !insertmacro UAC_AsUser_ExecShell "" "$INSTDIR\bin\${EXE_NAME}" "" "" ""
+FunctionEnd
+
+Function .onInit
+  !insertmacro UacInit "installer"
+FunctionEnd
+
+Function un.onInit
+  !insertmacro UacInit "uninstaller"
+FunctionEnd
+
+Function RelaunchAppIfNeeded
+  ${GetOptions} $CMDLINE "/launch" $0
+  StrCmp $0 "App" reopen no_reopen
+reopen:
+  Call StartApp
+no_reopen:
+FunctionEnd
+
+Function .onInstSuccess
+  Call RelaunchAppIfNeeded
+FunctionEnd
+
+Function .onInstFailed
+  Call RelaunchAppIfNeeded
+FunctionEnd
 
 ;--------------------------------
 ;Installer Sections
@@ -166,5 +237,4 @@ SectionEnd
 
 Section "Run client at start"
   WriteRegStr HKEY_CURRENT_USER "Software\Microsoft\Windows\CurrentVersion\Run" "${APP_NAME}-client" '"$INSTDIR\bin\${EXE_NAME}" ${PROPS_FILE}'
-  MessageBox MB_OK "${APP_NAME}-client will run on start"
 SectionEnd
