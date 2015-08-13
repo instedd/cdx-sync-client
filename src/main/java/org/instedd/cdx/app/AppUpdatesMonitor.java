@@ -5,6 +5,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.FileAttribute;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -38,7 +41,11 @@ public class AppUpdatesMonitor implements RSyncApplicationMonitor {
 	public void start(RSyncApplication application) {
 		timer.schedule(new TimerTask() {
 			public void run() {
-				updateAppIfNecessary();
+				try {
+					updateAppIfNecessary();
+				} catch (RuntimeException e) {
+					log.error("Unhandled error while checking application updates", e);
+				}
 			}
 		}, updatesCheckDelay, updatesCheckInterval);
 	}
@@ -74,7 +81,8 @@ public class AppUpdatesMonitor implements RSyncApplicationMonitor {
 	private void updateApp(String installerUrl) {
 		log.info("Downloading app update from " + installerUrl);
 		try {
-			File updater = File.createTempFile("cdxclient", "updater.exe");
+			Path tempDir = Files.createTempDirectory("cdx-client", new FileAttribute[0]);
+			File updater = new File(tempDir.toFile(), "CDX Client Updater.exe");;
 			FileUtils.copyURLToFile(new URL(installerUrl), updater);
 			
 			app.stop();
@@ -85,6 +93,9 @@ public class AppUpdatesMonitor implements RSyncApplicationMonitor {
 			System.exit(0);
 		} catch (IOException e) {
 			log.warn("Error trying to update from " + installerUrl, e);
+			if(!app.isRunning()) {
+				app.start();
+			}
 		}
 	}
 
