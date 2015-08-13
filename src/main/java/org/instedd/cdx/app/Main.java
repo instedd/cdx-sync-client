@@ -1,7 +1,5 @@
 package org.instedd.cdx.app;
 
-import static org.instedd.rsync_java_client.util.Exceptions.interruptable;
-
 import java.io.IOException;
 import java.util.EnumSet;
 import javax.swing.UIManager;
@@ -72,6 +70,7 @@ public class Main {
     RSyncApplication app = new RSyncApplication(settings, EnumSet.of(SyncMode.UPLOAD));
     app.addMonitor(new SystemTrayMonitor(settings));
     app.addMonitor(new ConsoleMonitor());
+    app.addMonitor(new AppUpdatesMonitor(settings));
     app.start();
   }
 
