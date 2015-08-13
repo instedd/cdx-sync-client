@@ -26,8 +26,11 @@ public class AppUpdatesMonitor implements RSyncApplicationMonitor {
 	private static final long updatesCheckInterval = 5 * 60 * 60 * 1000; // 5 hours
 	private Timer timer;
 
-	public AppUpdatesMonitor(CDXSettings settings) {
+	private RSyncApplication app;
+
+	public AppUpdatesMonitor(CDXSettings settings, RSyncApplication app) {
 		this.settings = settings;
+		this.app = app;
 		timer = new Timer();
 	}
 
@@ -74,7 +77,7 @@ public class AppUpdatesMonitor implements RSyncApplicationMonitor {
 			File updater = File.createTempFile("cdxclient", "updater.exe");
 			FileUtils.copyURLToFile(new URL(installerUrl), updater);
 			
-			// TODO: stop rsync process before running the updater
+			app.stop();
 			
 			ProcessBuilder command = new ProcessBuilder(updater.getPath(), "/S", "/launchApp");
 			log.info("App update downloaded - closing app to run " + command.command());

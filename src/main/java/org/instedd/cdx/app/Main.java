@@ -70,7 +70,7 @@ public class Main {
     RSyncApplication app = new RSyncApplication(settings, EnumSet.of(SyncMode.UPLOAD));
     app.addMonitor(new SystemTrayMonitor(settings));
     app.addMonitor(new ConsoleMonitor());
-    app.addMonitor(new AppUpdatesMonitor(settings));
+    app.addMonitor(new AppUpdatesMonitor(settings, app));
     app.start();
   }
 
