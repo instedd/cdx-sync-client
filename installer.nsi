@@ -179,6 +179,11 @@ Section "Build Launcher"
   Delete "rcedit.exe"
 SectionEnd
 
+Section "Register firewall exceptions"
+  DetailPrint "Registering Windows Firewall exceptions..."
+  SimpleFC::AddApplication "CDx Sync Client" "$INSTDIR\rsync.exe" 0 2 "" 1
+SectionEnd
+
 Section "Create Shortcuts"
   SetOutPath "$INSTDIR"
 
