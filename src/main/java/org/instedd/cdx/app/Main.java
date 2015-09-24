@@ -2,12 +2,15 @@ package org.instedd.cdx.app;
 
 import java.io.IOException;
 import java.util.EnumSet;
+
 import javax.swing.UIManager;
 
-import org.apache.log4j.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
+import org.apache.log4j.RollingFileAppender;
 import org.instedd.rsync_java_client.SyncMode;
 import org.instedd.rsync_java_client.app.ConsoleMonitor;
 import org.instedd.rsync_java_client.app.RSyncApplication;

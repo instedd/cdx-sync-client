@@ -1,16 +1,21 @@
 package org.instedd.cdx.app;
 
+import java.awt.Container;
 import java.io.File;
 
-import java.awt.*;
-import javax.swing.*;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
+import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.SwingConstants;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.instedd.rsync_java_client.credentials.Credentials;
-
 import org.json.JSONObject;
 
 public class ActivationDialog extends JDialog {

@@ -6,13 +6,13 @@ import java.awt.Toolkit;
 import java.awt.TrayIcon.MessageType;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 
-import javax.swing.*;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 
-import org.instedd.rsync_java_client.app.RSyncApplication;
 import org.instedd.rsync_java_client.RsyncSynchronizerListener;
+import org.instedd.rsync_java_client.app.RSyncApplication;
 
 public class SystemTrayMonitor extends org.instedd.rsync_java_client.app.SystemTrayMonitor
   implements RsyncSynchronizerListener {
