@@ -78,7 +78,8 @@ public class ActivationDialog extends JDialog {
       activateButton.addActionListener((ev) -> {
         new Thread(() -> {
           Credentials credentials = new Credentials(new File(settings.getRemoteKeyPath()));
-          SyncAuthServer authServer = new SyncAuthServer(tokenTextField.getText(), settings.authServerUrl);
+          String activationToken = tokenTextField.getText().trim();
+          SyncAuthServer authServer = new SyncAuthServer(activationToken, settings.authServerUrl);
 
           try {
             activationProgress.setVisible(true);
