@@ -143,7 +143,7 @@ public class SystemTrayMonitor extends org.instedd.rsync_java_client.app.SystemT
 		String deviceUUID = settings.deviceUUID;
 		if (deviceUUID == null) return;
 	
-		String url = settings.authServerUrl + "/devices/" + deviceUUID + "/submit_log";
+		String url = settings.authServerUrl + "/devices/" + deviceUUID + "/device_logs";
 		try {
 			Unirest.post(url).body(string).asString();
 		} catch (UnirestException e) {
