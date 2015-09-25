@@ -11,11 +11,18 @@ import java.util.List;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.instedd.rsync_java_client.RsyncSynchronizerListener;
 import org.instedd.rsync_java_client.app.RSyncApplication;
 
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
+
 public class SystemTrayMonitor extends org.instedd.rsync_java_client.app.SystemTrayMonitor
   implements RsyncSynchronizerListener {
+	
+	private static final Log log = LogFactory.getLog(SystemTrayMonitor.class);
 
   private CDXSettings settings;
   private Thread animationThread;
@@ -107,6 +114,7 @@ public class SystemTrayMonitor extends org.instedd.rsync_java_client.app.SystemT
   @Override
   public void transferFailed(String errorMessage) {
     super.transferFailed(errorMessage);
+    submitLog("Transfer failed: " + errorMessage);
     getTrayIcon().displayMessage("Transfer Failed\t", null, MessageType.ERROR);
     failed = true;
     stopAnimation();
@@ -130,4 +138,17 @@ public class SystemTrayMonitor extends org.instedd.rsync_java_client.app.SystemT
     }
     getTrayIcon().displayMessage("Transfer Completed\t", message.toString(), MessageType.INFO);
   }
+
+	private void submitLog(String string) {
+		String deviceUUID = settings.deviceUUID;
+		if (deviceUUID == null) return;
+	
+		String url = settings.authServerUrl + "/devices/" + deviceUUID + "/submit_log";
+		try {
+			Unirest.post(url).body(string).asString();
+		} catch (UnirestException e) {
+			log.fatal("Can't send error log to CDX server", e);
+			getTrayIcon().displayMessage("Can't send error log to CDX server\t", null, MessageType.ERROR);
+		}
+	}
 }
