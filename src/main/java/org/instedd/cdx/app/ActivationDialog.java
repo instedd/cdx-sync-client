@@ -99,6 +99,7 @@ public class ActivationDialog extends JDialog {
             settings.remoteInboxDir = serverSettings.getString("inbox_dir");
             settings.remoteOutboxDir = serverSettings.getString("outbox_dir");
             settings.deviceUUID = serverSettings.getString("device_uuid");
+            settings.deviceKey = serverSettings.getString("device_key");
 
             setVisible(false);
           } catch(Exception e) {

@@ -18,6 +18,7 @@ import org.instedd.rsync_java_client.app.RSyncApplication;
 
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import com.sun.org.apache.xerces.internal.util.URI;
 
 public class SystemTrayMonitor extends org.instedd.rsync_java_client.app.SystemTrayMonitor
   implements RsyncSynchronizerListener {
@@ -143,7 +144,7 @@ public class SystemTrayMonitor extends org.instedd.rsync_java_client.app.SystemT
 		String deviceUUID = settings.deviceUUID;
 		if (deviceUUID == null) return;
 	
-		String url = settings.authServerUrl + "/devices/" + deviceUUID + "/device_logs";
+		String url = settings.authServerUrl + "/devices/" + deviceUUID + "/device_logs?key=" + settings.deviceKey;
 		try {
 			Unirest.post(url).body(string).asString();
 		} catch (UnirestException e) {

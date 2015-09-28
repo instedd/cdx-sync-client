@@ -7,6 +7,7 @@ import org.instedd.rsync_java_client.Settings;
 public class CDXSettings extends Settings {
   public String authServerUrl;
   public String deviceUUID;
+  public String deviceKey;
 
   public CDXSettings() {
     super("cdx-sync-app", null);
@@ -14,23 +15,27 @@ public class CDXSettings extends Settings {
     strictHostChecking = false;
   }
   
-  @Override
-  public Properties toProperties() {
-	Properties properties = super.toProperties();
-	if (authServerUrl != null) {
-		properties.setProperty("auth.server.url", authServerUrl);
+	@Override
+	public Properties toProperties() {
+		Properties properties = super.toProperties();
+		if (authServerUrl != null) {
+			properties.setProperty("auth.server.url", authServerUrl);
+		}
+		if (deviceUUID != null) {
+			properties.setProperty("device.uuid", deviceUUID);
+		}
+		if (deviceKey != null) {
+			properties.setProperty("device.key", deviceKey);
+		}
+		return properties;
 	}
-	if (deviceUUID != null) {
-		properties.setProperty("device.uuid", deviceUUID);
-	}
-	return properties;
-  }
   
   @Override
   public void fromProperties(Properties properties) {
-	super.fromProperties(properties);
-	this.authServerUrl = loadProperty(properties, "auth.server.url", authServerUrl);
-	this.deviceUUID = loadProperty(properties, "device.uuid", deviceUUID);
+		super.fromProperties(properties);
+		this.authServerUrl = loadProperty(properties, "auth.server.url", authServerUrl);
+		this.deviceUUID = loadProperty(properties, "device.uuid", deviceUUID);
+		this.deviceKey = loadProperty(properties, "device.key", deviceKey);
   }
 
   public String logPath() {
@@ -41,6 +46,7 @@ public class CDXSettings extends Settings {
     super.copyTo(other);
     other.authServerUrl = this.authServerUrl;
     other.deviceUUID = this.deviceUUID;
+    other.deviceKey = this.deviceKey;
   }
 
   public CDXSettings clone() {
