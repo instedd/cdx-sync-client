@@ -74,6 +74,7 @@ public class Main {
     app.addMonitor(new SystemTrayMonitor(settings));
     app.addMonitor(new ConsoleMonitor());
     app.addMonitor(new AppUpdatesMonitor(settings, app));
+    app.addMonitor(new CommandsCheckMonitor(settings));
     app.start();
   }
 
