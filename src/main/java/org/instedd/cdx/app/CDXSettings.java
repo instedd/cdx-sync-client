@@ -11,7 +11,7 @@ public class CDXSettings extends Settings {
 
   public CDXSettings() {
     super("cdx-sync-app", null);
-    authServerUrl = "http://localhost:3000";
+    authServerUrl = "http://cdp-stg.instedd.org";
     strictHostChecking = false;
   }
   

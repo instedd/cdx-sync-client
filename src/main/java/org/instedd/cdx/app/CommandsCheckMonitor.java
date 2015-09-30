@@ -21,8 +21,8 @@ public class CommandsCheckMonitor implements RSyncApplicationMonitor {
   private static final Log log = LogFactory.getLog(AppUpdatesMonitor.class);
   
   private CDXSettings settings;
-  private static final long updatesCheckDelay = 5 * 60; // 5 minutes
-  private static final long updatesCheckInterval = 5 * 60 * 60 * 1000; // 1 hour
+  private static final long updatesCheckDelay = 5 * 60 * 1000; // 5 minutes
+  private static final long updatesCheckInterval = 1 * 60 * 60 * 1000; // 1 hour
   private Timer timer;
 
   public CommandsCheckMonitor(CDXSettings settings) {
