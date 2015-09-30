@@ -1,12 +1,9 @@
 package org.instedd.cdx.app;
 
-import java.io.IOException;
-
 import java.awt.Container;
 import java.awt.Font;
+import java.io.IOException;
 
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -16,9 +13,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 public class SettingsDialog extends JDialog {
-  private CDXSettings originalSettings;
+  private static final long serialVersionUID = 1L;
+  
   private CDXSettings settings;
   private JTextField outboxTextField;
   private JButton activationButton;
@@ -27,7 +27,6 @@ public class SettingsDialog extends JDialog {
   private boolean cancelled;
 
   public SettingsDialog(CDXSettings originalSettings) {
-    this.originalSettings = originalSettings;
     this.settings = originalSettings.clone();
     setTitle("CDX Client - Settings");
     setModal(true);

@@ -19,11 +19,11 @@ import org.instedd.rsync_java_client.credentials.Credentials;
 import org.json.JSONObject;
 
 public class ActivationDialog extends JDialog {
+  private static final long serialVersionUID = 1L;
+  
   private static final Log log = LogFactory.getLog(ActivationDialog.class);
-  private CDXSettings settings;
 
-  public ActivationDialog(CDXSettings settings) {
-      this.settings = settings;
+  public ActivationDialog(final CDXSettings settings) {
       setTitle("CDX Client - Device Activation");
       setModal(true);
       setBounds(100, 100, 450, 150);
@@ -98,6 +98,8 @@ public class ActivationDialog extends JDialog {
             settings.remoteUser = serverSettings.getString("user");
             settings.remoteInboxDir = serverSettings.getString("inbox_dir");
             settings.remoteOutboxDir = serverSettings.getString("outbox_dir");
+            settings.deviceUUID = serverSettings.getString("device_uuid");
+            settings.deviceKey = serverSettings.getString("device_key");
 
             setVisible(false);
           } catch(Exception e) {

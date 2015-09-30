@@ -63,7 +63,7 @@ public class AppUpdatesMonitor implements RSyncApplicationMonitor {
 
 	private JSONObject latestVersion() {
 		try {
-			URL versionSource = new URL("http://" + settings.remoteHost + "/client/version.json");
+			URL versionSource = new URL(settings.authServerUrl + "/client/version.json");
 			log.debug("Checking app updates from " + versionSource.toString());
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(versionSource.openStream()));
 			StringBuffer content = new StringBuffer();
