@@ -68,6 +68,17 @@ public class SystemTrayMonitor extends org.instedd.rsync_java_client.app.SystemT
       }
     });
     menu.add(menuItem);
+    
+    menuItem = new JMenuItem("Export Log...");
+    menuItem.addActionListener((e) -> {
+      try {
+        new LogsExporter(menu, settings).run();;
+      } catch (IOException ex) {
+        log.error("Couldn't export logs", ex);
+        getTrayIcon().displayMessage("Couldn't export logs\t", null, MessageType.ERROR);
+      }
+    });
+    menu.add(menuItem); 
   }
 
   private void startAnimation() {

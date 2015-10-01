@@ -72,16 +72,13 @@ public class CommandsCheckMonitor implements RSyncApplicationMonitor {
   }
   
   private String readLogs() throws IOException {
-    BufferedReader reader = new BufferedReader(new FileReader(settings.logPath()));
-    try {
+    try(BufferedReader reader = new BufferedReader(new FileReader(settings.logPath()))) {
       StringBuffer content = new StringBuffer();
       String line = null;
       while ((line = reader.readLine()) != null) {
         content.append(line);
       }
       return content.toString();
-    } finally {
-      reader.close();
     }
   }
 }
