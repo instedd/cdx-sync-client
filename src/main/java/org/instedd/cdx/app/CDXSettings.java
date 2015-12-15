@@ -11,10 +11,9 @@ public class CDXSettings extends Settings {
 
   public CDXSettings() {
     super("cdx-sync-app", null);
-    authServerUrl = "http://cdp-stg.instedd.org";
+    authServerUrl = "http://cdx-stg.instedd.org";
     strictHostChecking = false;
   }
-  
 	@Override
 	public Properties toProperties() {
 		Properties properties = super.toProperties();
